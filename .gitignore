@@ -1,2 +1,10 @@
 
 .DS_Store
+sbooks/sbooks/__pycache__/wsgi.cpython-37.pyc
+sbooks/sbooks/__pycache__/urls.cpython-37.pyc
+sbooks/db.sqlite3
+sbooks/.idea/vcs.xml
+sbooks/.idea/sbooks.iml
+sbooks/.idea/modules.xml
+sbooks/.idea/misc.xml
+sbooks/.idea/inspectionProfiles/profiles_settings.xml
