@@ -12,15 +12,15 @@ import re
 def modelo_beautifulsoup(enlace):  # Imprime por consola los resultados de la primera página
     my_html_text = requests.get(enlace)
     soup = BeautifulSoup(my_html_text.text, "html.parser")
-    # FAMILIA - CATEGORIA - SUBCATEGORIA
+    # CATEGORIA
     categoria = ""
-    subcategoria = ""
+    # subcategoria = ""
     ul = soup.find("ul", id="breadcrumb-flow")
     if ul is not None:
         li = ul.find_all("li")
         categoria = li[len(li) - 2].a.div.string
-        subcategoria = li[len(li) - 1].div.string
-    print("Categoria: " + categoria + "\n" + "Subcategoria: " + subcategoria)
+        # subcategoria = li[len(li) - 1].div.string
+    print("Categoria: " + categoria)
 
     # LISTA DE LIBROS
     resultados_pagina = soup.find("div", class_="results-page")  # Buscando esto primero filtramos los libros de arriba
@@ -64,8 +64,11 @@ def modelo_beautifulsoup(enlace):  # Imprime por consola los resultados de la pr
         else:
             foto_portada = ""
         print("Foto Portada (enlace): " + foto_portada)
-        print("------------------------------------")
 
+        # DETALLES LIBRO ENLACE
+        detalle_enlace = "https://www.casadellibro.com" + x.find('a', class_="title")['href']
+        print("Detalle libro (enlace): " + detalle_enlace)
+        print("------------------------------------")
 
 if __name__ == "__main__":
     modelo_beautifulsoup("https://www.casadellibro.com/libros/ciencias-humanas/filosofia/104003000")
