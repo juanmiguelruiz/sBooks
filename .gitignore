@@ -59,3 +59,5 @@ sbooks/sbooks/__pycache__/urls.cpython-38.pyc
 sbooks/sbooks/__pycache__/wsgi.cpython-38.pyc
 sbooks/sbooks/__pycache__/__init__.cpython-37.pyc
 sbooks/sbooks/__pycache__/settings.cpython-37.pyc
+sbooks/books/migrations/0005_auto_20200105_1022.py
+sbooks/books/migrations/__pycache__/0005_auto_20200105_1022.cpython-38.pyc
