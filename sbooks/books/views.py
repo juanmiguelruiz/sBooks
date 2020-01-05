@@ -10,27 +10,83 @@ from whoosh.qparser import MultifieldParser, OrGroup
 import requests
 
 
-
 # Create your views here.
 
 def index(request):
-    return render(request, 'index.html', {'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'index.html', {'STATIC_URL': settings.STATIC_URL})
+
 
 def libros(request):
-    return render(request, 'libros.html', {'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'libros.html', {'STATIC_URL': settings.STATIC_URL})
 
+# -----CARGAR DB-----
+def populate_libros(request):
+    # cargamos primero las categorias
+    populate_categorias()
+
+    Libro.objects.all().delete()
+    lista_libros = []
+    # Enlaces a los libros de todas las categorias
+    lista_enlaces_categorias = \
+        ["https://www.casadellibro.com/libros/ciencias-politicas-y-sociales/105000000",
+         "https://www.casadellibro.com/libros/psicologia-y-pedagogia/130000000",
+         "https://www.casadellibro.com/libros/autoayuda-y-espiritualidad/102000000",
+         "https://www.casadellibro.com/libros/historia/115000000",
+         "https://www.casadellibro.com/libros/ciencias/103000000",
+         "https://www.casadellibro.com/libros/medicina/123000000",
+         "https://www.casadellibro.com/libros/economia/110000000",
+         "https://www.casadellibro.com/libros/libros-de-texto-y-formacion/132000000",
+         "https://www.casadellibro.com/libros/literatura/121000000",
+         "https://www.casadellibro.com/libros/literatura/narrativa-en-bolsillo/121005000",
+         "https://www.casadellibro.com/libros/literatura/en-otros-idiomas/121003000",
+         "https://www.casadellibro.com/libros/infantil/infantil-0-a-2-anos/117001000",
+         "https://www.casadellibro.com/libros/infantil/infantil-3-a-5-anos/117005000",
+         "https://www.casadellibro.com/libros/infantil/infantil-6-a-8-anos/117002000",
+         "https://www.casadellibro.com/libros/infantil/infantil-9-a-12-anos/117003000",
+         "https://www.casadellibro.com/libros/comics/411000000",
+         "https://www.casadellibro.com/libros/comics/manga/411006000",
+         "https://www.casadellibro.com/libros/comics-manga-infantil-y-juvenil/412000000",
+         "https://www.casadellibro.com/libros/comics-manga-infantil-y-juvenil/manga-juvenil/412004000",
+         "https://www.casadellibro.com/libros/juvenil/117001014",
+         "https://www.casadellibro.com/libros/arte/101000000",
+         "https://www.casadellibro.com/libros/filologia/112000000",
+         "https://www.casadellibro.com/libros/deportes-y-juegos/108000000",
+         "https://www.casadellibro.com/libros/cocina/106000000"]
+
+    for enlace in lista_enlaces_categorias:
+        print("************* Añadiendo libros del enlace: " + enlace + " ****************")
+        libros_scraping = scraping_beautifulsoup(enlace)
+        i = 0
+        for libro in libros_scraping:
+            print("----- Añadiendo libro: " + str(i) + " --------")
+            print(libro[4])
+            lista_libros.append(Libro(titulo=libro[0], autor=libro[1], descripcion=libro[2], portada=libro[3],
+                                      categoria=Categoria.objects.get(nombre=libro[4]), detalle_enlace=libro[5],
+                                      puntuacion_media=libro[6]))
+            i = i + 1
+    Libro.objects.bulk_create(lista_libros)
+    print("*********************************************************")
+    print("Libros añadidos: " + str(Libro.objects.count()))
+    print("---------------------------------------------------------")
+
+    return render(request, 'index.html', {'STATIC_URL': settings.STATIC_URL})
 
 
 def populate_categorias():
     Categoria.objects.all().delete()
-    categorias = ['Ciencias Políticas y sociales', 'Psicología y pedagogía', 'Autoayuda y espiritualidad',
-                  'Historia', 'Ciencias', 'Medicina', 'Economía', 'Libros de texto y formación',
+    categorias = ['Ciencias Políticas y Sociales', 'Psicología y Pedagogía', 'Autoayuda y Espiritualidad',
+                  'Historia', 'Ciencias', 'Medicina', 'Economía', 'Libros de Texto y Formación',
                   'Infantil', 'Literatura', 'Cómics', 'Cómics manga infantil y juvenil', 'Juvenil',
                   'Arte', 'Filología', 'Deportes y juegos', 'Cocina']
+    i = 0
     for categoria in categorias:
+        print("Añadiendo categoria: " + categoria)
         Categoria.objects.create(nombre=categoria)
+        i = i + 1
+    print("Se han añadido " + str(Categoria.objects.count()) + " categorías")
 
-def modelo_beautifulsoup(enlace):  # Imprime por consola los resultados de la primera página
+
+def scraping_beautifulsoup(enlace):  # Imprime por consola los resultados de la primera página
     my_html_text = requests.get(enlace)
     soup = BeautifulSoup(my_html_text.text, "html.parser")
     libros = []
@@ -40,7 +96,7 @@ def modelo_beautifulsoup(enlace):  # Imprime por consola los resultados de la pr
     ul = soup.find("ul", id="breadcrumb-flow")
     if ul is not None:
         li = ul.find_all("li")
-        categoria = li[len(li) - 1].div.string
+        categoria = li[2].div.string
     print("Categoria: " + categoria + "\n")
 
     # LISTA DE LIBROS
@@ -105,7 +161,6 @@ def modelo_beautifulsoup(enlace):  # Imprime por consola los resultados de la pr
 
 
 def indexWhoosh(request):
-
     schema = Schema(idLibro=NUMERIC(stored=True), titulo=TEXT(stored=True), autor=TEXT(stored=True),
                     descripcion=TEXT(stored=True),
                     portada=TEXT(stored=True))
@@ -122,14 +177,13 @@ def indexWhoosh(request):
                             portada=libro.portada)
     writer.commit()
 
-   # end_time = time.perf_counter()
-   # end_cpu = time.process_time()
+    # end_time = time.perf_counter()
+    # end_cpu = time.process_time()
 
     # Time spent in total
-    #print("Elapsed time: {0:.3f} (s)".format(end_time - start_time))
+    # print("Elapsed time: {0:.3f} (s)".format(end_time - start_time))
     # Time spent only CPU
-    #print("CPU process time: {0:.3f} (s)".format(end_cpu - start_cpu))
+    # print("CPU process time: {0:.3f} (s)".format(end_cpu - start_cpu))
     msg = '{} libros indexados'.format(len(libros))
 
     return render(request, 'whoosh.html', {'message': msg})
-
