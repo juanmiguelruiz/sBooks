@@ -1,12 +1,24 @@
-from django.shortcuts import render
-from books.models import *
-
 from django.shortcuts import render_to_response, get_object_or_404, HttpResponse, render, HttpResponseRedirect
 from django.conf import settings
+from books.models import *
 from bs4 import BeautifulSoup
+import os.path
+from whoosh.index import create_in, open_dir
+from whoosh.fields import *
+from whoosh.qparser import MultifieldParser, OrGroup
+
 import requests
 
+
+
 # Create your views here.
+
+def index(request):
+    return render(request, 'index.html', {'STATIC_URL':settings.STATIC_URL})
+
+def libros(request):
+    return render(request, 'libros.html', {'STATIC_URL':settings.STATIC_URL})
+
 
 
 def populate_categorias():
@@ -84,5 +96,32 @@ def modelo_beautifulsoup(enlace):  # Imprime por consola los resultados de la pr
     return libros
 
 
+def indexWhoosh(request):
 
+    schema = Schema(idLibro=NUMERIC(stored=True), titulo=TEXT(stored=True), autor=TEXT(stored=True),
+                    descripcion=TEXT(stored=True),
+                    portada=TEXT(stored=True))
+
+    if not os.path.exists("indiceWhoosh"):
+        os.mkdir("indiceWhoosh")
+    ix = create_in("indiceWhoosh", schema)
+    writer = ix.writer()
+
+    libros = Libro.objects.all()
+    for libro in libros:
+        writer.add_document(idLibro=libro.idLibro, titulo=libro.titulo, autor=libro.autor,
+                            descripcion=libro.descripcion,
+                            portada=libro.portada)
+    writer.commit()
+
+   # end_time = time.perf_counter()
+   # end_cpu = time.process_time()
+
+    # Time spent in total
+    #print("Elapsed time: {0:.3f} (s)".format(end_time - start_time))
+    # Time spent only CPU
+    #print("CPU process time: {0:.3f} (s)".format(end_cpu - start_cpu))
+    msg = '{} libros indexados'.format(len(libros))
+
+    return render(request, 'whoosh.html', {'message': msg})
 

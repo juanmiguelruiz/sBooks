@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>sBooks</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{{STATIC_URL}}css/main.css" />
+        <noscript><link rel="stylesheet" href="{{STATIC_URL}}css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload landing">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header">
+					<h1 id="logo"><a href="index">sBooks</a></h1>
+					<nav id="nav">
+						<ul>
+							<li><a href="index">Inicio</a></li>
+							<li><a href="libros">Libros</a></li>
+                            <li><a href="top.html">Top Libros</a></li>
+                            <li><a href="recomendaciones.html">Recomendaciones</a></li>
+                            <li>
+								<a href="#">Herramientas</a>
+								<ul>
+									<li><a href="baseDatos.html">Cargar Base de Datos</a></li>
+									<li><a href="whoosh.html">Cargar Whoosh</a></li>
+								</ul>
+							</li>
+							<li><a href="#" class="button primary">Regístrate</a></li>
+                            <li><a href="#" class="button primary1">Entra</a></li>
+						</ul>
+					</nav>
+				</header>
+
+            {% block index %} {% endblock %}
+            {% block libros %} {% endblock %}
+
+
+        <footer id="footer">
+
+            <p> Calzado LLamas, Ángel Manuel<br>
+                Ruiz Pazos, Juan Miguel<br>
+                Santos Cabezas, Manuel
+            </p>
+
+					<ul class="copyright">
+						<li>2020 &copy; All rights reserved.</li>
+					</ul>
+				</footer>
+        </div>
+    </body>
+
+
+
+<!-- Scripts -->
+			<script src="{{STATIC_URL}}js/jquery.min.js"></script>
+			<script src="{{STATIC_URL}}js/jquery.scrolly.min.js"></script>
+			<script src="{{STATIC_URL}}js/jquery.dropotron.min.js"></script>
+			<script src="{{STATIC_URL}}js/jquery.scrollex.min.js"></script>
+			<script src="{{STATIC_URL}}/js/browser.min.js"></script>
+			<script src="{{STATIC_URL}}js/breakpoints.min.js"></script>
+			<script src="{{STATIC_URL}}js/util.js"></script>
+			<script src="{{STATIC_URL}}js/main.js"></script>
+
+</html>
