@@ -14,7 +14,12 @@ import requests
 # Create your views here.
 
 def index(request):
-    return render(request, 'base.html', {'STATIC_URL':settings.STATIC_URL})
+    return render(request, 'index.html', {'STATIC_URL':settings.STATIC_URL})
+
+def libros(request):
+    return render(request, 'libros.html', {'STATIC_URL':settings.STATIC_URL})
+
+
 
 def populate_categorias():
     Categoria.objects.all().delete()
