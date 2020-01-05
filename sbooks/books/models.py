@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Usuario(models.Model):
@@ -25,6 +26,8 @@ class Libro(models.Model):
     portada = models.TextField(verbose_name="Portada")
     categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE)
     detalle_enlace = models.TextField(verbose_name='Detalle (enlace)')
+    puntuacion_media = models.TextField(verbose_name='Puntuación media')
+    puntuaciones = models.ManyToManyField(Usuario, through='Puntuacion')
 
     def __str__(self):
         return self.titulo
@@ -52,9 +55,9 @@ class Categoria(models.Model):
 
 
 class Puntuacion(models.Model):
-    puntuacion = models.TextField()
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     libro = models.ForeignKey(Libro, on_delete=models.CASCADE)
+    puntuacion = models.IntegerField(verbose_name='Puntuación', validators=[MinValueValidator(0), MaxValueValidator(5)])
 
     def __str__(self):
         return self.puntuacion
