@@ -68,7 +68,15 @@ def modelo_beautifulsoup(enlace):  # Imprime por consola los resultados de la pr
         # DETALLES LIBRO ENLACE
         detalle_enlace = "https://www.casadellibro.com" + x.find('a', class_="title")['href']
         print("Detalle libro (enlace): " + detalle_enlace)
-        print("------------------------------------")
+
+        # PUNTUACION MEDIA
+        puntuacion_media = x.find("div", class_="rating")
+        if puntuacion_media is not None:
+            puntuacion_media = puntuacion_media.text.strip()
+        else:
+            puntuacion_media = ""
+        print("Puntuacion media: " + puntuacion_media)
+        print("----------------------------------------------")
 
 if __name__ == "__main__":
-    modelo_beautifulsoup("https://www.casadellibro.com/libros/ciencias-humanas/filosofia/104003000")
+    modelo_beautifulsoup("https://www.casadellibro.com/libros/ciencias-politicas-y-sociales/105000000")
