@@ -173,9 +173,9 @@ def scraping_beautifulsoup(enlace):  # Imprime por consola los resultados de la 
 
 
 def indexWhoosh(request):
-    schema = Schema(idLibro=NUMERIC(stored=True), titulo=TEXT(stored=True), autor=TEXT(stored=True),
-                    descripcion=TEXT(stored=True),
-                    portada=TEXT(stored=True))
+    schema = Schema(idLibro=NUMERIC(stored=True), titulo=KEYWORD(stored=True), autor=KEYWORD(stored=True),
+                    descripcion=TEXT(stored=True), portada=TEXT(stored=True),categoria=TEXT(stored=True),
+                    detalle_enlace=TEXT(stored=True), puntuacion_media=TEXT(stored=True),puntuaciones=TEXT(stored=True))
 
     if not os.path.exists("indiceWhoosh"):
         os.mkdir("indiceWhoosh")
@@ -185,17 +185,36 @@ def indexWhoosh(request):
     libros = Libro.objects.all()
     for libro in libros:
         writer.add_document(idLibro=libro.idLibro, titulo=libro.titulo, autor=libro.autor,
-                            descripcion=libro.descripcion,
-                            portada=libro.portada)
+                            descripcion=str(libro.descripcion),portada=str(libro.portada),categoria= str(libro.categoria),
+                            detalle_enlace=str(libro.detalle_enlace), puntuacion_media=libro.puntuacion_media,
+                            puntuaciones=str(libro.puntuaciones))
+
     writer.commit()
-
-    # end_time = time.perf_counter()
-    # end_cpu = time.process_time()
-
-    # Time spent in total
-    # print("Elapsed time: {0:.3f} (s)".format(end_time - start_time))
-    # Time spent only CPU
-    # print("CPU process time: {0:.3f} (s)".format(end_cpu - start_cpu))
     msg = '{} libros indexados'.format(len(libros))
 
-    return render(request, 'whoosh.html', {'message': msg})
+
+    return render(request, 'message.html', {'message': msg})
+
+
+# Search-whoosh products by query
+def searchWhoosh(request):
+    ix = open_dir("indiceWhoosh")
+    qp = MultifieldParser(['titulo', 'name', 'category', 'price'], schema=ix.schema, group=OrGroup)
+
+    q = qp.parse(request.GET.get('query'))
+
+    with ix.searcher() as searcher:
+        # Gets the top X results for the query where X=query_limit
+        results = searcher.search(q, limit=int(request.GET.get('query_limit')))
+        print("{} products".format(len(results)))
+        results_json = []
+        for r in results:
+            # product = r['brand']+" - "+r['name']+" - "+r['category']+" - "+str(r['price'])+"€"
+            product = [r['sku'], r['image'], r['brand'], r['name'], r['category'], r['price']]
+            results_json.append(product)
+        print('--------------END SEARCH--------------')
+    print(results_json)
+    mimetype = 'application/json'
+    return HttpResponse(json.dumps(results_json), mimetype)
+
+
