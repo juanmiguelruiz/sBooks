@@ -15,9 +15,21 @@ import requests
 def index(request):
     return render(request, 'index.html', {'STATIC_URL': settings.STATIC_URL})
 
-
 def libros(request):
     return render(request, 'libros.html', {'STATIC_URL': settings.STATIC_URL})
+
+def libro(request):
+    return render(request, 'libro.html', {'STATIC_URL': settings.STATIC_URL})
+
+def top(request):
+    return render(request, 'top.html', {'STATIC_URL': settings.STATIC_URL})
+
+def parati(request):
+    return render(request, 'parati.html', {'STATIC_URL': settings.STATIC_URL})
+
+def similares(request):
+    return render(request, 'similares.html', {'STATIC_URL': settings.STATIC_URL})
+
 
 # -----CARGAR DB-----
 def populate_libros(request):

@@ -22,5 +22,9 @@ urlpatterns = [
     path('', views.index),
     path('index', views.index),
     path('libros', views.libros),
+    path('top', views.top),
+    path('parati', views.parati),
+    path('similares', views.similares),
+    path('libro', views.libro),
     path('cargarBD/', views.populate_libros)
 ]

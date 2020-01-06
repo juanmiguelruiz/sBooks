@@ -2148,6 +2148,11 @@ input, select, textarea {
 		text-align: center;
 	}
 
+	.centrado{
+	  margin-left: auto;
+	  margin-right: auto;
+	}
+
 	header p {
 		color: #ffffff;
 		position: relative;
@@ -2935,6 +2940,11 @@ input, select, textarea {
 			opacity: 0.25;
 		}
 
+		.btn_category{
+			position: relative;
+			top: 10px;
+		}
+
 /* Goto Next */
 
 	.goto-next {
@@ -3539,6 +3549,7 @@ input, select, textarea {
 		background: #272833;
 		padding: 6em 0;
 		text-align: center;
+		position: relative;
 	}
 
 		#footer .icons .icon.alt {
@@ -4114,3 +4125,7 @@ input, select, textarea {
 
 	}
 
+
+.foto_libro{
+	float: left;
+}

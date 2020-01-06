@@ -2,7 +2,7 @@
 
 <html>
 	<head>
-		<title>sBooks</title>
+		{% block titu %}<title>sBooks</title>{% endblock %}
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="{{STATIC_URL}}css/main.css" />
@@ -18,13 +18,20 @@
 						<ul>
 							<li><a href="index">Inicio</a></li>
 							<li><a href="libros">Libros</a></li>
-                            <li><a href="top.html">Top Libros</a></li>
-                            <li><a href="recomendaciones.html">Recomendaciones</a></li>
+                            <li><a href="top">Top Libros</a></li>
+                             <li>
+								<a href="#">Recomendaciones</a>
+								<ul>
+									<li><a href="parati">Para tí</a></li>
+									<li><a href="similares">Libros Similares</a></li>
+								</ul>
+							</li>
                             <li>
 								<a href="#">Herramientas</a>
 								<ul>
 									<li><a href="/cargarBD">Cargar Base de Datos</a></li>
-									<li><a href="whoosh.html">Cargar Whoosh</a></li>
+									<li><a href="/cargarWhoosh">Cargar Whoosh</a></li>
+                                    <li><a href="/cargarRecSys">Cargar Sistema de Recomendación</a></li>
 								</ul>
 							</li>
 							<li><a href="#" class="button primary">Regístrate</a></li>
