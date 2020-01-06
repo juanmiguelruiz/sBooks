@@ -15,16 +15,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from books import views
+from books import views as bviews
+from users import views as uviews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index),
-    path('index', views.index),
-    path('libros', views.libros),
-    path('top', views.top),
-    path('parati', views.parati),
-    path('similares', views.similares),
-    path('libro', views.libro),
-    path('cargarBD/', views.populate_libros)
+    path('', bviews.index),
+    path('index', bviews.index),
+    path('libros', bviews.libros),
+    path('top', bviews.top),
+    path('parati', bviews.parati),
+    path('similares', bviews.similares),
+    path('libro', bviews.libro),
+    path('cargarBD/', bviews.populate_libros),
+
+    path('login', uviews.LoginUser.as_view()),
+    path('login1', uviews.login),
+
 ]

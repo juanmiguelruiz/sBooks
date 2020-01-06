@@ -26,6 +26,7 @@ SECRET_KEY = 'qa5+8kx4gla*bfiql0inlooz$@)3@7b_%gqdij$2!0$mdy3el%'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 
 # Application definition
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'books.apps.BooksConfig',
     'recommendation_sys.apps.RecommendationSysConfig',
     'users.apps.UsersConfig',
+    'crispy_forms',
 ]
 
 MIDDLEWARE = [
