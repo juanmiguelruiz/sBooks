@@ -28,6 +28,8 @@ urlpatterns = [
     path('similares', bviews.similares),
     path('libro', bviews.libro),
     path('cargarBD/', bviews.populate_libros),
+    path('cargarWhoosh/', bviews.indexWhoosh),
+
 
     path('login', uviews.LoginUser.as_view()),
     path('login1', uviews.login),
