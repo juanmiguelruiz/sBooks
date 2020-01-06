@@ -22,4 +22,5 @@ urlpatterns = [
     path('', views.index),
     path('index', views.index),
     path('libros', views.libros),
+    path('cargarBD/', views.populate_libros)
 ]
