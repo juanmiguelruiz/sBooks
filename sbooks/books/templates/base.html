@@ -16,16 +16,18 @@
 					<h1 id="logo"><a href="index">sBooks</a></h1>
 					<nav id="nav">
 						<ul>
-							<li><a href="index">Inicio</a></li>
-							<li><a href="libros">Libros</a></li>
-                            <li><a href="top">Top Libros</a></li>
+							<li><a href="/index">Inicio</a></li>
+							<li><a href="/libros">Libros</a></li>
+                            <li><a href="/top">Top Libros</a></li>
                              <li>
 								<a href="#">Recomendaciones</a>
 								<ul>
-									<li><a href="parati">Para tí</a></li>
-									<li><a href="similares">Libros Similares</a></li>
+									<li><a href="/parati">Para tí</a></li>
+									<li><a href="/similares">Libros Similares</a></li>
 								</ul>
 							</li>
+                            {% if  user.is_staff %}
+
                             <li>
 								<a href="#">Herramientas</a>
 								<ul>
@@ -34,8 +36,14 @@
                                     <li><a href="/cargarRecSys">Cargar Sistema de Recomendación</a></li>
 								</ul>
 							</li>
-							<li><a href="#" class="button primary">Regístrate</a></li>
-                            <li><a href="#" class="button primary1">Entra</a></li>
+                        {% endif %}
+                             {% if not user.is_authenticated %}
+							<li><a href="/signup" class="button primary">Regístrate</a></li>
+                            <li><a href="/login" class="button primary1">Entra</a></li>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+							<li><a href="/logout" class="button primary">Salir</a></li>
+                            {% endif %}
 						</ul>
 					</nav>
 				</header>
@@ -45,7 +53,7 @@
 
         <footer id="footer">
 
-            <p> Calzado LLamas, Ángel Manuel<br>
+            <p> Calzado Llamas, Ángel Manuel<br>
                 Ruiz Pazos, Juan Miguel<br>
                 Santos Cabezas, Manuel
             </p>

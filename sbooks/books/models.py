@@ -8,11 +8,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Usuario(models.Model):
     idUsuario = models.AutoField(primary_key=True)
-    nick = models.CharField(verbose_name="Nick", max_length=10, unique="True")
+    username = models.CharField(verbose_name="Username", max_length=10, unique="True")
     nombre = models.CharField(verbose_name="Nombre", max_length=50)
     apellidos = models.CharField(verbose_name="Apellidos", max_length=50)
-    pais = models.CharField(verbose_name="País", max_length=50)
-    ciudad = models.CharField(verbose_name="Ciudad", max_length=50)
+    email = models.EmailField(verbose_name="Email", max_length=250)
 
     def __str__(self):
         return self.apellidos, self.nombre

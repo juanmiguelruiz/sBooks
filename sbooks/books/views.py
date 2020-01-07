@@ -1,5 +1,6 @@
-from django.shortcuts import render_to_response, get_object_or_404, HttpResponse, render, HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404, HttpResponse, render, HttpResponseRedirect, redirect
 from django.conf import settings
+from books.forms import RegisterForm
 from books.models import *
 from bs4 import BeautifulSoup
 import os.path
@@ -15,20 +16,38 @@ import requests
 def index(request):
     return render(request, 'index.html', {'STATIC_URL': settings.STATIC_URL})
 
+
 def libros(request):
     return render(request, 'libros.html', {'STATIC_URL': settings.STATIC_URL})
+
 
 def libro(request):
     return render(request, 'libro.html', {'STATIC_URL': settings.STATIC_URL})
 
+
 def top(request):
     return render(request, 'top.html', {'STATIC_URL': settings.STATIC_URL})
+
 
 def parati(request):
     return render(request, 'parati.html', {'STATIC_URL': settings.STATIC_URL})
 
+
 def similares(request):
     return render(request, 'similares.html', {'STATIC_URL': settings.STATIC_URL})
+
+
+def signup(response):
+    if response.method == "POST":
+        form = RegisterForm(response.POST)
+        if form.is_valid():
+            form.save()
+
+        return redirect("/index")
+    else:
+        form = RegisterForm()
+
+    return render(response, "signup.html", {"form": form})
 
 
 # -----CARGAR DB-----
@@ -174,8 +193,9 @@ def scraping_beautifulsoup(enlace):  # Imprime por consola los resultados de la 
 
 def indexWhoosh(request):
     schema = Schema(idLibro=NUMERIC(stored=True), titulo=KEYWORD(stored=True), autor=KEYWORD(stored=True),
-                    descripcion=TEXT(stored=True), portada=TEXT(stored=True),categoria=TEXT(stored=True),
-                    detalle_enlace=TEXT(stored=True), puntuacion_media=TEXT(stored=True),puntuaciones=TEXT(stored=True))
+                    descripcion=TEXT(stored=True), portada=TEXT(stored=True), categoria=TEXT(stored=True),
+                    detalle_enlace=TEXT(stored=True), puntuacion_media=TEXT(stored=True),
+                    puntuaciones=TEXT(stored=True))
 
     if not os.path.exists("indiceWhoosh"):
         os.mkdir("indiceWhoosh")
@@ -185,13 +205,13 @@ def indexWhoosh(request):
     libros = Libro.objects.all()
     for libro in libros:
         writer.add_document(idLibro=libro.idLibro, titulo=libro.titulo, autor=libro.autor,
-                            descripcion=str(libro.descripcion),portada=str(libro.portada),categoria= str(libro.categoria),
+                            descripcion=str(libro.descripcion), portada=str(libro.portada),
+                            categoria=str(libro.categoria),
                             detalle_enlace=str(libro.detalle_enlace), puntuacion_media=libro.puntuacion_media,
                             puntuaciones=str(libro.puntuaciones))
 
     writer.commit()
     msg = '{} libros indexados'.format(len(libros))
-
 
     return render(request, 'message.html', {'message': msg})
 
@@ -216,5 +236,3 @@ def searchWhoosh(request):
     print(results_json)
     mimetype = 'application/json'
     return HttpResponse(json.dumps(results_json), mimetype)
-
-

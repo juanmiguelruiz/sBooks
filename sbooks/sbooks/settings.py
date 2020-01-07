@@ -26,7 +26,6 @@ SECRET_KEY = 'qa5+8kx4gla*bfiql0inlooz$@)3@7b_%gqdij$2!0$mdy3el%'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 
 # Application definition
@@ -40,9 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'books.apps.BooksConfig',
     'recommendation_sys.apps.RecommendationSysConfig',
-    'users.apps.UsersConfig',
     'crispy_forms',
 ]
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -129,3 +129,6 @@ STATICFILES_DIRS = (
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static')
 
 STATIC_URL = '/static/'
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
