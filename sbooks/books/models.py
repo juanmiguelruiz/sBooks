@@ -4,17 +4,7 @@ from django.db import models
 
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-
-
-class Usuario(models.Model):
-    idUsuario = models.AutoField(primary_key=True)
-    username = models.CharField(verbose_name="Username", max_length=10, unique="True")
-    nombre = models.CharField(verbose_name="Nombre", max_length=50)
-    apellidos = models.CharField(verbose_name="Apellidos", max_length=50)
-    email = models.EmailField(verbose_name="Email", max_length=250)
-
-    def __str__(self):
-        return self.apellidos, self.nombre
+from django.contrib.auth.models import User
 
 
 class Libro(models.Model):
@@ -26,7 +16,7 @@ class Libro(models.Model):
     categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE)
     detalle_enlace = models.TextField(verbose_name='Detalle (enlace)')
     puntuacion_media = models.TextField(verbose_name='Puntuación media')
-    puntuaciones = models.ManyToManyField(Usuario, through='Puntuacion')
+    puntuaciones = models.ManyToManyField(User, through='Puntuacion')
 
     def __str__(self):
         return self.titulo
@@ -54,7 +44,7 @@ class Categoria(models.Model):
 
 
 class Puntuacion(models.Model):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     libro = models.ForeignKey(Libro, on_delete=models.CASCADE)
     puntuacion = models.IntegerField(verbose_name='Puntuación', validators=[MinValueValidator(0), MaxValueValidator(5)])
 

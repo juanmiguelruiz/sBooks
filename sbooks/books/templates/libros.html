@@ -22,7 +22,7 @@
                   <option>Puntuación: Peor puntuados primero</option>
                 </select>
               </div>
-              <div class="col-sm-2 mb-sm-20 centrado">
+              <!--div class="col-sm-2 mb-sm-20 centrado">
                 <select class="form-control">
                   <option selected="selected">Categoría</option>
                   <option>Categoría 1</option>
@@ -32,18 +32,7 @@
                  <option>Categoría 5</option>
 
                 </select>
-              </div>
-              <div class="col-sm-3 mb-sm-20 centrado">
-                <select class="form-control">
-                  <option selected="selected">Autor</option>
-                  <option>Autor1</option>
-                  <option>Autor2</option>
-                  <option>Autor3</option>
-                  <option>Autor4</option>
-                  <option>Autor5</option>
-                  <option>Autor6</option>
-                </select>
-              </div>
+              </div-->
 
                 <div class="search-box">
                       <input class="form-control" type="text" placeholder="Buscar..."/>
@@ -60,14 +49,21 @@
 
             <div class="box alt">
                 <div class="row gtr-uniform">
+                {% for x in libros %}
                     <section class="col-3 col-6-medium col-12-xsmall">
-                        <span class="icon solid alt major fa-chart-area"></span>
-                        <h3>Puntuacion: 5</h3>
-                        <h3>Título</h3>
-                        <h4>Autor</h4>
-                        <a href="#" class="button small">Ver más</a>
+                        <span class="icon solid alt major fa-chart-area"><img src="{{x.portada}}" alt="{{x.titulo}}"></span>
+                        {% if not x.puntuacion_media %}
+                        <h3>Puntuacion: - </h3>
+                        {% endif %}
+                        <h3>Puntuacion: {{x.puntuacion_media}} </h3>
+                        <h3>{{x.titulo}}</h3>
+                        <h4>{{x.autor}}</h4>
+                        <a href='libro/{{x.idLibro}}' class="button small">Ver más</a>
                     </section>
+                {% endfor %}
+
                 </div>
+
             </div>
         </div>
     </section>

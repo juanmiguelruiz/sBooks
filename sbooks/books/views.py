@@ -7,6 +7,7 @@ import os.path
 from whoosh.index import create_in, open_dir
 from whoosh.fields import *
 from whoosh.qparser import MultifieldParser, OrGroup
+from books.models import *
 
 import requests
 
@@ -18,11 +19,13 @@ def index(request):
 
 
 def libros(request):
-    return render(request, 'libros.html', {'STATIC_URL': settings.STATIC_URL})
+    libros = Libro.objects.all()
+    return render(request, 'libros.html', {'libros' : libros,'STATIC_URL': settings.STATIC_URL})
 
 
-def libro(request):
-    return render(request, 'libro.html', {'STATIC_URL': settings.STATIC_URL})
+def libro(request, id_libro):
+    libro = get_object_or_404(Libro, idLibro=id_libro)
+    return render(request, 'libro.html', {'libro':libro, 'STATIC_URL': settings.STATIC_URL})
 
 
 def top(request):

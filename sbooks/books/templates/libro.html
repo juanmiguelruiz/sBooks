@@ -6,14 +6,27 @@
         <section id="four" class="wrapper style1 special fade-up">
             <p class="centrado">
             <span class=" image left">
-                <img class="foto_libro" src="{{ STATIC_URL }}images/neruda.jpg" height="400">
+                <img class="foto_libro" src="{{ libro.portada }}" alt="{{titulo}}">
             </span>
-            <h2>Título del libro</h2>
-            <h3>Puntuación: 5</h3>
-            <h4>Autor</h4>
-            <h5>Categoría</h5>
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-            <a href="#" class="button small">Casa del Libro</a>
+            <h2>{{libro.titulo}}</h2>
+            <h3>Puntuación (Casa del Libro): {{libro.puntuacion_media}} </h3>
+            <h3>Puntuacion:</h3>
+
+             <div class="col-sm-2 mb-sm-20  entra">
+                <select class="form-control">
+                  <option selected="selected">Mi puntuación</option>
+                  <option>1</option>
+                 <option>2</option>
+                 <option>3 </option>
+                 <option>4</option>
+                 <option>5</option>
+                </select>
+              </div>
+
+            <h4>{{libro.autor}}</h4>
+            <h5>{{libro.categoria}}</h5>
+            <p> {{libro.descripcion}} </p>
+            <a href="{{libro.detalle_enlace}}" class="button small">Casa del Libro</a>
             </p>
         </section>
     <br>
