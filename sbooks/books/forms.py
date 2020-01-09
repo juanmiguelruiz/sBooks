@@ -9,3 +9,6 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
+
+class BusquedaTituloAutor(forms.Form):
+    lib = forms.CharField(label="Titulo_autor", widget=forms.TextInput)

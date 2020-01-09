@@ -14,15 +14,15 @@
 
         <section>
           <div class="container">
-            <form class="row">
-              <div class="col-sm-4 mb-sm-20 centrado">
+            <form class="row"id="formulario" method="get" action=''>{% csrf_token %}
+              <!--<div class="col-sm-4 mb-sm-20 centrado">
                 <select class="form-control">
                   <option selected="selected">Orden por defecto</option>
                   <option>Puntuación: Mejor puntuados primero</option>
                   <option>Puntuación: Peor puntuados primero</option>
                 </select>
               </div>
-              <!--div class="col-sm-2 mb-sm-20 centrado">
+              div class="col-sm-2 mb-sm-20 centrado">
                 <select class="form-control">
                   <option selected="selected">Categoría</option>
                   <option>Categoría 1</option>
@@ -35,8 +35,8 @@
               </div-->
 
                 <div class="search-box">
-                      <input class="form-control" type="text" placeholder="Buscar..."/>
-                    </div>
+                      <input class="form-control" type="text" name="titulo_autor" id="id_libros" placeholder="Buscar titulo o autor"/>
+                </div>
 
               <div class="col-sm-3 centrado">
                 <button class="button primary btn_category" type="submit">Aplicar</button>

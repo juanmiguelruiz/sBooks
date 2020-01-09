@@ -6,9 +6,10 @@ from bs4 import BeautifulSoup
 import os.path
 from whoosh.index import create_in, open_dir
 from whoosh.fields import *
-from whoosh.qparser import MultifieldParser, OrGroup
+from whoosh.qparser import MultifieldParser, OrGroup,QueryParser
+from whoosh.query import Or, Term,Query
 from books.models import *
-
+from books.forms import *
 import requests
 
 
@@ -19,7 +20,17 @@ def index(request):
 
 
 def libros(request):
+    print(request.GET.get("titulo_autor"))
+    queryset= request.GET.get("titulo_autor")
     libros = Libro.objects.all()
+    print("111111111111111111111111111")
+    print(libros)
+    print("111111111111111111111111111")
+    if queryset:
+        libros = searchWhoosh(request)
+        print(libros)
+       # print("PREVIA 222" + libros.titulo)
+
     return render(request, 'libros.html', {'libros' : libros,'STATIC_URL': settings.STATIC_URL})
 
 
@@ -207,35 +218,49 @@ def indexWhoosh(request):
 
     libros = Libro.objects.all()
     for libro in libros:
-        writer.add_document(idLibro=libro.idLibro, titulo=libro.titulo, autor=libro.autor,
+        writer.add_document(idLibro=libro.idLibro, titulo=libro.titulo.strip(), autor=libro.autor.strip(),
                             descripcion=str(libro.descripcion), portada=str(libro.portada),
                             categoria=str(libro.categoria),
                             detalle_enlace=str(libro.detalle_enlace), puntuacion_media=libro.puntuacion_media,
                             puntuaciones=str(libro.puntuaciones))
-
+        print(libro)
     writer.commit()
     msg = '{} libros indexados'.format(len(libros))
 
     return render(request, 'message.html', {'message': msg})
 
 
-# Search-whoosh products by query
 def searchWhoosh(request):
-    ix = open_dir("indiceWhoosh")
-    qp = MultifieldParser(['titulo', 'name', 'category', 'price'], schema=ix.schema, group=OrGroup)
+    formulario = BusquedaTituloAutor()
+    libros = None
+    print("ANTES DE GET")
+    if request.method == 'GET':
+            print("DESPUES DE GET")
+            formulario = BusquedaTituloAutor(request.GET)
 
-    q = qp.parse(request.GET.get('query'))
 
-    with ix.searcher() as searcher:
-        # Gets the top X results for the query where X=query_limit
-        results = searcher.search(q, limit=int(request.GET.get('query_limit')))
-        print("{} products".format(len(results)))
-        results_json = []
-        for r in results:
-            # product = r['brand']+" - "+r['name']+" - "+r['category']+" - "+str(r['price'])+"€"
-            product = [r['sku'], r['image'], r['brand'], r['name'], r['category'], r['price']]
-            results_json.append(product)
-        print('--------------END SEARCH--------------')
-    print(results_json)
-    mimetype = 'application/json'
-    return HttpResponse(json.dumps(results_json), mimetype)
+            print("ES VALIDO")
+            ix = open_dir("indiceWhoosh")
+            with ix.searcher() as searcher:
+                dato=request.GET.get("titulo_autor")
+                print ("DATOOOOOOO"+ dato)
+                print("ENTRANDO WHOOOOOOOSHHHHHHH   "+str(dato))
+
+                #query=QueryParser("titulo", ix.schema).parse(dato.strip())
+                query = Or([Term("titulo", str(dato.strip())), Term("autor", str(dato))])
+                # query = Or([Term("titulo", en.get().strip()), Term("descripcion", en.get().strip())])
+                print("Hace query")
+                results = searcher.search(query)
+                print(len(results))
+                for r in results:
+                    print(r)
+                    if not libros:
+
+                        libros=[Libro.objects.get(idLibro = r['idLibro'])]
+                        print(libros)
+                    else:
+
+                        libros.append(Libro.objects.get(idLibro = r['idLibro']))
+                        print(libros)
+    #print(libros)
+    return libros
