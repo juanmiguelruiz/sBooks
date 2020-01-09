@@ -49,4 +49,6 @@ class Puntuacion(models.Model):
     puntuacion = models.IntegerField(verbose_name='Puntuación', validators=[MinValueValidator(0), MaxValueValidator(5)])
 
     def __str__(self):
-        return self.puntuacion
+        return "Usuario: " + str(self.usuario) + " al Libro: " + str(self.libro)
+    class Meta:
+        ordering = ('usuario', )

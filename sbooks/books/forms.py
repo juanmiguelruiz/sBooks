@@ -9,3 +9,8 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
+
+
+class RatingForm(forms.Form):
+    tu_puntuacion = forms.IntegerField(max_value=5)
+

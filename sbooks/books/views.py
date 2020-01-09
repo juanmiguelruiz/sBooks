@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response, get_object_or_404, HttpResponse, render, HttpResponseRedirect, redirect
 from django.conf import settings
-from books.forms import RegisterForm
+from books.forms import *
 from books.models import *
 from bs4 import BeautifulSoup
 import os.path
@@ -20,12 +20,29 @@ def index(request):
 
 def libros(request):
     libros = Libro.objects.all()
-    return render(request, 'libros.html', {'libros' : libros,'STATIC_URL': settings.STATIC_URL})
+    return render(request, 'libros.html', {'libros': libros, 'STATIC_URL': settings.STATIC_URL})
 
 
 def libro(request, id_libro):
     libro = get_object_or_404(Libro, idLibro=id_libro)
-    return render(request, 'libro.html', {'libro':libro, 'STATIC_URL': settings.STATIC_URL})
+
+    # PUNTUACION USUARIO
+    formulario = RatingForm()
+    if request.method == 'POST':
+        print("HA HECHO POST")
+        formulario = RatingForm(request.POST)
+
+        if formulario.is_valid():
+            print("FORMULARIO VÁLIDO")
+            print("Request User: " + str(request.user))
+            print("Id Libro: " + id_libro)
+            print("Rating: " + str(formulario.cleaned_data['tu_puntuacion']))
+            Puntuacion.objects.create(usuario=request.user, libro=Libro.objects.get(idLibro=id_libro),
+                                      puntuacion=formulario.cleaned_data['tu_puntuacion'])
+            print("Puntuaciones guardadas: " + str(Puntuacion.objects.count()))
+
+    return render(request, 'libro.html',
+                  {'libro': libro, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
 
 
 def top(request):
@@ -239,3 +256,5 @@ def searchWhoosh(request):
     print(results_json)
     mimetype = 'application/json'
     return HttpResponse(json.dumps(results_json), mimetype)
+
+
