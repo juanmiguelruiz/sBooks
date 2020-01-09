@@ -69,3 +69,9 @@ sbooks/users/__pycache__/apps.cpython-38.pyc
 sbooks/users/__pycache__/models.cpython-38.pyc
 sbooks/users/migrations/__pycache__/__init__.cpython-38.pyc
 sbooks/.idea/workspace.xml___jb_tmp___
+sbooks/__pycache__/manage.cpython-38.pyc
+sbooks/books/__pycache__/forms.cpython-38.pyc
+sbooks/books/migrations/0006_auto_20200108_1058.py
+sbooks/books/migrations/0007_auto_20200109_1343.py
+sbooks/books/migrations/__pycache__/0006_auto_20200108_1058.cpython-38.pyc
+sbooks/books/migrations/__pycache__/0007_auto_20200109_1343.cpython-38.pyc

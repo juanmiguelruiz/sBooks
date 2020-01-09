@@ -12,3 +12,8 @@ class RegisterForm(UserCreationForm):
 
 class BusquedaTituloAutor(forms.Form):
     lib = forms.CharField(label="Titulo_autor", widget=forms.TextInput)
+
+class RatingForm(forms.Form):
+    tu_puntuacion = forms.IntegerField(max_value=5)
+
+

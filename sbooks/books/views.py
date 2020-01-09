@@ -1,6 +1,6 @@
 from django.shortcuts import render_to_response, get_object_or_404, HttpResponse, render, HttpResponseRedirect, redirect
 from django.conf import settings
-from books.forms import RegisterForm
+from books.forms import *
 from books.models import *
 from bs4 import BeautifulSoup
 import os.path
@@ -20,23 +20,35 @@ def index(request):
 
 
 def libros(request):
-    print(request.GET.get("titulo_autor"))
     queryset= request.GET.get("titulo_autor")
     libros = Libro.objects.all()
-    print("111111111111111111111111111")
-    print(libros)
-    print("111111111111111111111111111")
     if queryset:
         libros = searchWhoosh(request)
-        print(libros)
-       # print("PREVIA 222" + libros.titulo)
 
     return render(request, 'libros.html', {'libros' : libros,'STATIC_URL': settings.STATIC_URL})
 
 
+
 def libro(request, id_libro):
     libro = get_object_or_404(Libro, idLibro=id_libro)
-    return render(request, 'libro.html', {'libro':libro, 'STATIC_URL': settings.STATIC_URL})
+
+    # PUNTUACION USUARIO
+    formulario = RatingForm()
+    if request.method == 'POST':
+        print("HA HECHO POST")
+        formulario = RatingForm(request.POST)
+
+        if formulario.is_valid():
+            print("FORMULARIO VÁLIDO")
+            print("Request User: " + str(request.user))
+            print("Id Libro: " + id_libro)
+            print("Rating: " + str(formulario.cleaned_data['tu_puntuacion']))
+            Puntuacion.objects.create(usuario=request.user, libro=Libro.objects.get(idLibro=id_libro),
+                                      puntuacion=formulario.cleaned_data['tu_puntuacion'])
+            print("Puntuaciones guardadas: " + str(Puntuacion.objects.count()))
+
+    return render(request, 'libro.html',
+                  {'libro': libro, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
 
 
 def top(request):
@@ -231,36 +243,25 @@ def indexWhoosh(request):
 
 
 def searchWhoosh(request):
+
     formulario = BusquedaTituloAutor()
     libros = None
-    print("ANTES DE GET")
     if request.method == 'GET':
-            print("DESPUES DE GET")
             formulario = BusquedaTituloAutor(request.GET)
-
-
-            print("ES VALIDO")
             ix = open_dir("indiceWhoosh")
+
             with ix.searcher() as searcher:
                 dato=request.GET.get("titulo_autor")
-                print ("DATOOOOOOO"+ dato)
-                print("ENTRANDO WHOOOOOOOSHHHHHHH   "+str(dato))
-
-                #query=QueryParser("titulo", ix.schema).parse(dato.strip())
                 query = Or([Term("titulo", str(dato.strip())), Term("autor", str(dato))])
-                # query = Or([Term("titulo", en.get().strip()), Term("descripcion", en.get().strip())])
-                print("Hace query")
                 results = searcher.search(query)
-                print(len(results))
                 for r in results:
-                    print(r)
                     if not libros:
-
                         libros=[Libro.objects.get(idLibro = r['idLibro'])]
-                        print(libros)
                     else:
 
                         libros.append(Libro.objects.get(idLibro = r['idLibro']))
-                        print(libros)
-    #print(libros)
     return libros
+
+
+
+
