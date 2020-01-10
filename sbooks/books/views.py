@@ -7,7 +7,7 @@ import os.path
 from whoosh.index import create_in, open_dir
 from whoosh.fields import *
 from whoosh.qparser import MultifieldParser, OrGroup,QueryParser
-from whoosh.query import Or, Term,Query
+from whoosh.query import Or, Term,Query,And
 from books.models import *
 from books.forms import *
 import requests
@@ -20,12 +20,13 @@ def index(request):
 
 
 def libros(request):
-    queryset= request.GET.get("titulo_autor")
+
+    querysetTituloAutor= request.GET.get("titulo_autor")
     libros = Libro.objects.all()
-    if queryset:
+    if querysetTituloAutor:
         libros = searchWhoosh(request)
 
-    return render(request, 'libros.html', {'libros' : libros,'STATIC_URL': settings.STATIC_URL})
+    return render(request, 'libros.html', {'libros' : libros, 'STATIC_URL': settings.STATIC_URL})
 
 
 
@@ -219,7 +220,7 @@ def scraping_beautifulsoup(enlace):  # Imprime por consola los resultados de la 
 
 def indexWhoosh(request):
     schema = Schema(idLibro=NUMERIC(stored=True), titulo=KEYWORD(stored=True), autor=KEYWORD(stored=True),
-                    descripcion=TEXT(stored=True), portada=TEXT(stored=True), categoria=TEXT(stored=True),
+                    descripcion=TEXT(stored=True), portada=TEXT(stored=True), categoria=KEYWORD(stored=True),
                     detalle_enlace=TEXT(stored=True), puntuacion_media=TEXT(stored=True),
                     puntuaciones=TEXT(stored=True))
 
@@ -230,12 +231,11 @@ def indexWhoosh(request):
 
     libros = Libro.objects.all()
     for libro in libros:
-        writer.add_document(idLibro=libro.idLibro, titulo=libro.titulo.strip(), autor=libro.autor.strip(),
+        writer.add_document(idLibro=libro.idLibro, titulo=str(libro.titulo), autor=str(libro.autor),
                             descripcion=str(libro.descripcion), portada=str(libro.portada),
                             categoria=str(libro.categoria),
                             detalle_enlace=str(libro.detalle_enlace), puntuacion_media=libro.puntuacion_media,
                             puntuaciones=str(libro.puntuaciones))
-        print(libro)
     writer.commit()
     msg = '{} libros indexados'.format(len(libros))
 
@@ -244,16 +244,16 @@ def indexWhoosh(request):
 
 def searchWhoosh(request):
 
-    formulario = BusquedaTituloAutor()
     libros = None
     if request.method == 'GET':
-            formulario = BusquedaTituloAutor(request.GET)
             ix = open_dir("indiceWhoosh")
-
             with ix.searcher() as searcher:
-                dato=request.GET.get("titulo_autor")
-                query = Or([Term("titulo", str(dato.strip())), Term("autor", str(dato))])
-                results = searcher.search(query)
+                libros_titulo_autor=request.GET.get("titulo_autor")
+                query = MultifieldParser(["titulo", "autor,","categoria"], schema=ix.schema)
+                q=query.parse(libros_titulo_autor)
+
+                results = searcher.search(q)
+                print(results)
                 for r in results:
                     if not libros:
                         libros=[Libro.objects.get(idLibro = r['idLibro'])]
