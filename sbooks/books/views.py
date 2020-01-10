@@ -33,7 +33,10 @@ def libros(request):
 
 def libro(request, id_libro):
     libro = get_object_or_404(Libro, idLibro=id_libro)
-
+    try:
+       puntuacionUsuarioActual = Puntuacion.objects.get(libro=libro.idLibro, usuario=request.user.id)
+    except:
+        puntuacionUsuarioActual = ""
     # PUNTUACION USUARIO
     formulario = RatingForm()
     if request.method == 'POST':
@@ -45,12 +48,16 @@ def libro(request, id_libro):
             print("Request User: " + str(request.user))
             print("Id Libro: " + id_libro)
             print("Rating: " + str(formulario.cleaned_data['tu_puntuacion']))
-            Puntuacion.objects.create(usuario=request.user, libro=Libro.objects.get(idLibro=id_libro),
-                                      puntuacion=formulario.cleaned_data['tu_puntuacion'])
-            print("Puntuaciones guardadas: " + str(Puntuacion.objects.count()))
-
+            if puntuacionUsuarioActual == "":
+                Puntuacion.objects.create(usuario=request.user, libro=Libro.objects.get(idLibro=id_libro),
+                                          puntuacion=formulario.cleaned_data['tu_puntuacion'])
+                puntuacionUsuarioActual = Puntuacion.objects.get(libro=libro.idLibro, usuario=request.user.id)
+                print("Puntuaciones en BBDD: " + str(Puntuacion.objects.count()))
+            else:
+                puntuacionUsuarioActual.puntuacion = formulario.cleaned_data['tu_puntuacion']
+                puntuacionUsuarioActual.save()
     return render(request, 'libro.html',
-                  {'libro': libro, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'libro': libro, 'puntuacionUsuarioActual': puntuacionUsuarioActual, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
 
 
 def top(request):

@@ -13,8 +13,8 @@
 
             <!-- Puntuacion del usuario -->
             <form id="formulario" method="post" action="">{% csrf_token %}
+                (Ahora: {{ puntuacionUsuarioActual.puntuacion }})
                 {{ formulario.as_p }}
-
                 <input type="submit" value="puntuar">
             </form>
 
