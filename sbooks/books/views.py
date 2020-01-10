@@ -4,6 +4,7 @@ from books.forms import *
 from books.models import *
 from bs4 import BeautifulSoup
 import os.path
+from whoosh import sorting
 from whoosh.index import create_in, open_dir
 from whoosh.fields import *
 from whoosh.qparser import MultifieldParser, OrGroup,QueryParser
@@ -53,7 +54,11 @@ def libro(request, id_libro):
 
 
 def top(request):
-    return render(request, 'top.html', {'STATIC_URL': settings.STATIC_URL})
+    querysetTituloAutor = request.GET.get("titulo_autor")
+    libros = Libro.objects.all()
+    if querysetTituloAutor:
+        libros = searchWhoosh2(request)
+    return render(request, 'top.html', {'libros' : libros,'STATIC_URL': settings.STATIC_URL})
 
 
 def parati(request):
@@ -221,7 +226,7 @@ def scraping_beautifulsoup(enlace):  # Imprime por consola los resultados de la 
 def indexWhoosh(request):
     schema = Schema(idLibro=NUMERIC(stored=True), titulo=KEYWORD(stored=True), autor=KEYWORD(stored=True),
                     descripcion=TEXT(stored=True), portada=TEXT(stored=True), categoria=KEYWORD(stored=True),
-                    detalle_enlace=TEXT(stored=True), puntuacion_media=TEXT(stored=True),
+                    detalle_enlace=TEXT(stored=True), puntuacion_media=TEXT(stored=True,sortable=True),
                     puntuaciones=TEXT(stored=True))
 
     if not os.path.exists("indiceWhoosh"):
@@ -264,4 +269,24 @@ def searchWhoosh(request):
 
 
 
+def searchWhoosh2(request):
+
+    libros = None
+    if request.method == 'GET':
+            ix = open_dir("indiceWhoosh")
+            with ix.searcher() as searcher:
+                libros_titulo_autor=request.GET.get("titulo_autor")
+                query = MultifieldParser(["titulo", "autor,","categoria"], schema=ix.schema)
+                q=query.parse(libros_titulo_autor)
+                cats = sorting.FieldFacet("puntuacion_media")
+
+                results = searcher.search(q,sortedby=cats)
+                print(results)
+                for r in results:
+                    if not libros:
+                        libros=[Libro.objects.get(idLibro = r['idLibro'])]
+                    else:
+
+                        libros.append(Libro.objects.get(idLibro = r['idLibro']))
+    return libros
 
