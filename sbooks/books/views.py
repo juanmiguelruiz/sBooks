@@ -62,7 +62,7 @@ def libro(request, id_libro):
 
 def top(request):
     querysetTituloAutor = request.GET.get("titulo_autor")
-    libros = Libro.objects.all()
+    libros = Libro.objects.all().order_by('-puntuacion_media')
     if querysetTituloAutor:
         libros = searchWhoosh2(request)
     return render(request, 'top.html', {'libros' : libros,'STATIC_URL': settings.STATIC_URL})
@@ -261,7 +261,10 @@ def searchWhoosh(request):
             ix = open_dir("indiceWhoosh")
             with ix.searcher() as searcher:
                 libros_titulo_autor=request.GET.get("titulo_autor")
-                query = MultifieldParser(["titulo", "autor,","categoria"], schema=ix.schema)
+                query = MultifieldParser(["titulo", "autor","categoria"], schema=ix.schema)
+                #q = Or([Term("titulo", libros_titulo_autor), Term("autor", libros_titulo_autor),Term("categoria", libros_titulo_autor)])
+                #query = QueryParser("autor", ix.schema)
+
                 q=query.parse(libros_titulo_autor)
 
                 results = searcher.search(q)
@@ -283,12 +286,9 @@ def searchWhoosh2(request):
             ix = open_dir("indiceWhoosh")
             with ix.searcher() as searcher:
                 libros_titulo_autor=request.GET.get("titulo_autor")
-                query = MultifieldParser(["titulo", "autor,","categoria"], schema=ix.schema)
+                query = MultifieldParser(["titulo", "autor","categoria"], schema=ix.schema)
                 q=query.parse(libros_titulo_autor)
-                cats = sorting.FieldFacet("puntuacion_media")
-
-                results = searcher.search(q,sortedby=cats)
-                print(results)
+                results = searcher.search(q)
                 for r in results:
                     if not libros:
                         libros=[Libro.objects.get(idLibro = r['idLibro'])]
