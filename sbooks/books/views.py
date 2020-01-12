@@ -141,8 +141,10 @@ def populate_libros(request):
     print("Libros añadidos: " + str(Libro.objects.count()))
     print("---------------------------------------------------------")
 
-    return render(request, 'index.html', {'STATIC_URL': settings.STATIC_URL})
+    msg = '{} libros añadidos en la base de datos'.format(Libro.objects.count())
+    return render(request, 'message.html', {'message': msg, 'STATIC_URL': settings.STATIC_URL})
 
+list
 
 def populate_categorias():
     Categoria.objects.all().delete()
@@ -255,7 +257,7 @@ def indexWhoosh(request):
     writer.commit()
     msg = '{} libros indexados'.format(len(libros))
 
-    return render(request, 'message.html', {'message': msg})
+    return render(request, 'message.html', {'message': msg}, {'STATIC_URL': settings.STATIC_URL})
 
 
 def searchWhoosh(request):
