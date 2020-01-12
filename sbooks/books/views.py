@@ -221,11 +221,13 @@ def scraping_beautifulsoup(enlace):  # Imprime por consola los resultados de la 
         # PUNTUACION MEDIA
         puntuacion_media = x.find("div", class_="rating")
         if puntuacion_media is not None:
-            puntuacion_media = puntuacion_media.text.strip()
+            if puntuacion_media.text.strip() != "":
+                puntuacion_media = int(puntuacion_media.text.strip())
+
+            else:
+                puntuacion_media = 0
         else:
-            puntuacion_media = ""
-        print("Puntuacion media: " + puntuacion_media)
-        print("----------------------------------------------")
+            puntuacion_media = 0
         libro = [titulo, autor, breve_descripcion, foto_portada, categoria, detalle_enlace, puntuacion_media]
         libros.append(libro)
 
@@ -235,7 +237,7 @@ def scraping_beautifulsoup(enlace):  # Imprime por consola los resultados de la 
 def indexWhoosh(request):
     schema = Schema(idLibro=NUMERIC(stored=True), titulo=KEYWORD(stored=True), autor=KEYWORD(stored=True),
                     descripcion=TEXT(stored=True), portada=TEXT(stored=True), categoria=KEYWORD(stored=True),
-                    detalle_enlace=TEXT(stored=True), puntuacion_media=TEXT(sortable=True),
+                    detalle_enlace=TEXT(stored=True), puntuacion_media=NUMERIC(sortable=True),
                     puntuaciones=TEXT(stored=True))
 
     if not os.path.exists("indiceWhoosh"):
@@ -248,7 +250,7 @@ def indexWhoosh(request):
         writer.add_document(idLibro=libro.idLibro, titulo=str(libro.titulo), autor=str(libro.autor),
                             descripcion=str(libro.descripcion), portada=str(libro.portada),
                             categoria=str(libro.categoria),
-                            detalle_enlace=str(libro.detalle_enlace), puntuacion_media=str(libro.puntuacion_media),
+                            detalle_enlace=str(libro.detalle_enlace), puntuacion_media=libro.puntuacion_media,
                             puntuaciones=str(libro.puntuaciones))
     writer.commit()
     msg = '{} libros indexados'.format(len(libros))
@@ -286,11 +288,10 @@ def searchWhoosh2(request):
             ix = open_dir("indiceWhoosh")
             with ix.searcher() as searcher:
                 cats = sorting.FieldFacet("puntuacion_media",reverse=True)
-                print(cats)
                 libros_titulo_autor=request.GET.get("titulo_autor").upper()
                 query = MultifieldParser(["titulo", "autor","categoria"], schema=ix.schema)
                 q=query.parse(libros_titulo_autor)
-                results = searcher.search(q,sortedby=cats)
+                results = searcher.search(q,sortedby=cats,limit= 30)
 
                 for r in results:
                     if not libros:

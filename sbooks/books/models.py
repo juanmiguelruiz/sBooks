@@ -15,7 +15,7 @@ class Libro(models.Model):
     portada = models.TextField(verbose_name="Portada")
     categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE)
     detalle_enlace = models.TextField(verbose_name='Detalle (enlace)')
-    puntuacion_media = models.TextField(verbose_name='Puntuación media')
+    puntuacion_media = models.IntegerField(verbose_name='Puntuación media', null=True)
     puntuaciones = models.ManyToManyField(User, through='Puntuacion')
 
     def __str__(self):
