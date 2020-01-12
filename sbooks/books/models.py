@@ -25,18 +25,18 @@ class Libro(models.Model):
 class Categoria(models.Model):
     idCategoria = models.AutoField(primary_key=True)
 
-    CATEGORIAS = (('Ciencias Políticas y sociales', 'Ciencias Políticas y sociales'),
-                  ('Psicología y pedagogía', 'Psicología y pedagogía'),
-                  ('Autoayuda y espiritualidad', 'Autoayuda y espiritualidad'),
-                  ('Historia', 'Historia'), ('Ciencias', 'Ciencias'),
-                  ('Medicina', 'Medicina'), ('Economía', 'Economía'),
-                  ('Libros de texto y formación', 'Libros de texto y formación'),
-                  ('Infantil', 'Infantil'),
-                  ('Literatura', 'Literatura'),
-                  ('Cómics', 'Cómics'), ('Cómics manga infantil y juvenil', 'Cómics manga infantil y juvenil'),
-                  ('Juvenil', 'Juvenil'),
-                  ('Arte', 'Arte'), ('Filología', 'Filología'), ('Deportes y juegos', 'Deportes y juegos'),
-                  ('Cocina', 'Cocina'))
+    CATEGORIAS = (('CIENCIAS POLÍTICAS Y SOCIALES', 'CIENCIAS POLÍTICAS Y SOCIALES'),
+                  ('PSICOLOGÍA Y PEDAGOGÍA', 'PSICOLOGÍA Y PEDAGOGÍA'),
+                  ('AUTOAYUDA Y ESPIRITUALIDAD', 'AUTOAYUDA Y ESPIRITUALIDAD'),
+                  ('HISTORIA', 'HISTORIA'), ('CIENCIAS', 'CIENCIAS'),
+                  ('MEDICINA', 'MEDICINA'), ('ECONOMÍA', 'ECONOMÍA'),
+                  ('LIBROS DE TEXTO Y FORMACIÓN', 'LIBROS DE TEXTO Y FORMACIÓN'),
+                  ('INFANTIL', 'INFANTIL'),
+                  ('LITERATURA', 'LITERATURA'),
+                  ('CÓMICS', 'CÓMICS'), ('CÓMICS MANGA INFANTIL Y JUVENIL', 'CÓMICS MANGA INFANTIL Y JUVENIL'),
+                  ('JUVENIL', 'JUVENIL'),
+                  ('ARTE', 'ARTE'), ('FILOLOGÍA', 'FILOLOGÍA'), ('DEPORTES Y JUEGOS', 'DEPORTES Y JUEGOS'),
+                  ('COCINA', 'COCINA'))
     nombre = models.TextField(verbose_name='Categoria', choices=CATEGORIAS)
 
     def __str__(self):

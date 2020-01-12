@@ -1,3 +1,5 @@
+from builtins import type
+
 from django.shortcuts import render_to_response, get_object_or_404, HttpResponse, render, HttpResponseRedirect, redirect
 from django.conf import settings
 from books.forms import *
@@ -233,7 +235,7 @@ def scraping_beautifulsoup(enlace):  # Imprime por consola los resultados de la 
 def indexWhoosh(request):
     schema = Schema(idLibro=NUMERIC(stored=True), titulo=KEYWORD(stored=True), autor=KEYWORD(stored=True),
                     descripcion=TEXT(stored=True), portada=TEXT(stored=True), categoria=KEYWORD(stored=True),
-                    detalle_enlace=TEXT(stored=True), puntuacion_media=TEXT(stored=True,sortable=True),
+                    detalle_enlace=TEXT(stored=True), puntuacion_media=TEXT(sortable=True),
                     puntuaciones=TEXT(stored=True))
 
     if not os.path.exists("indiceWhoosh"):
@@ -246,7 +248,7 @@ def indexWhoosh(request):
         writer.add_document(idLibro=libro.idLibro, titulo=str(libro.titulo), autor=str(libro.autor),
                             descripcion=str(libro.descripcion), portada=str(libro.portada),
                             categoria=str(libro.categoria),
-                            detalle_enlace=str(libro.detalle_enlace), puntuacion_media=libro.puntuacion_media,
+                            detalle_enlace=str(libro.detalle_enlace), puntuacion_media=str(libro.puntuacion_media),
                             puntuaciones=str(libro.puntuaciones))
     writer.commit()
     msg = '{} libros indexados'.format(len(libros))
@@ -260,15 +262,13 @@ def searchWhoosh(request):
     if request.method == 'GET':
             ix = open_dir("indiceWhoosh")
             with ix.searcher() as searcher:
-                libros_titulo_autor=request.GET.get("titulo_autor")
+                libros_titulo_autor=request.GET.get("titulo_autor").upper()
                 query = MultifieldParser(["titulo", "autor","categoria"], schema=ix.schema)
-                #q = Or([Term("titulo", libros_titulo_autor), Term("autor", libros_titulo_autor),Term("categoria", libros_titulo_autor)])
-                #query = QueryParser("autor", ix.schema)
 
                 q=query.parse(libros_titulo_autor)
 
                 results = searcher.search(q)
-                print(results)
+
                 for r in results:
                     if not libros:
                         libros=[Libro.objects.get(idLibro = r['idLibro'])]
@@ -285,10 +285,13 @@ def searchWhoosh2(request):
     if request.method == 'GET':
             ix = open_dir("indiceWhoosh")
             with ix.searcher() as searcher:
-                libros_titulo_autor=request.GET.get("titulo_autor")
+                cats = sorting.FieldFacet("puntuacion_media",reverse=True)
+                print(cats)
+                libros_titulo_autor=request.GET.get("titulo_autor").upper()
                 query = MultifieldParser(["titulo", "autor","categoria"], schema=ix.schema)
                 q=query.parse(libros_titulo_autor)
-                results = searcher.search(q)
+                results = searcher.search(q,sortedby=cats)
+
                 for r in results:
                     if not libros:
                         libros=[Libro.objects.get(idLibro = r['idLibro'])]
