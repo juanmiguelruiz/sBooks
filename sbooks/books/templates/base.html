@@ -26,7 +26,7 @@
 									<li><a href="/similares">Libros Similares</a></li>
 								</ul>
 							</li>
-                            {% if  user.is_staff %}
+                            {% if  user.is_authenticated %}
 
                             <li>
 								<a href="#">Herramientas</a>
@@ -48,7 +48,11 @@
 					</nav>
 				</header>
 
-            {% block content %} {% endblock %}
+            {% block content %}
+                {% block message %}
+{% endblock %}
+
+             {% endblock %}
 
 
         <footer id="footer">

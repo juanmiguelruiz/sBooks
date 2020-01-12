@@ -13,15 +13,16 @@
             </header>
 
         <section>
-          <div class="container">
+         <div class="container">
             <form class="row"id="formulario" method="get" action=''>{% csrf_token %}
 
                 <div class="search-box">
-                      <input class="form-control" type="text" name="titulo_autor" id="id_libros" placeholder="Buscar titulo, autor o categoría"/>
+                      <input class="form-control" type="text" name="puntuacion" id="id_libros"
+                             placeholder="Buscar título, autor o categoría"/>
                 </div>
 
-              <div class="col-sm-3 centrado">
-                <button class="button primary btn_category" type="submit">Aplicar</button>
+              <div class="col-sm-3">
+                <button class="button primary btn_category buscar_btn" type="submit">Buscar</button>
               </div>
             </form>
 
@@ -33,14 +34,14 @@
                 <div class="row gtr-uniform">
                 {% for x in libros %}
                     <section class="col-3 col-6-medium col-12-xsmall">
-                        <span class="icon solid alt major fa-chart-area"><img src="{{x.portada}}" alt="{{x.titulo}}"></span>
+                        <span><img src="{{x.portada}}" alt="{{x.titulo}}" width="145" height="215"></span>
                         {% if not x.puntuacion_media %}
-                            <h3>Puntuacion media: -  </h3>
+                            <h4>Puntuacion media: -  </h4>
                         {% else %}
-                            <h3>Puntuacion media: {{x.puntuacion_media}} </h3>
+                            <h4>Puntuacion media: {{x.puntuacion_media}} </h4>
                         {% endif %}
-                        <h3>{{x.titulo}}</h3>
-                        <h4>{{x.autor}}</h4>
+                        <h4 class="suspensivos">{{x.titulo}}</h4>
+                        <h5>{{x.autor}}</h5>
                         <a href='libro/{{x.idLibro}}' class="button small">Ver más</a>
                     </section>
                 {% endfor %}

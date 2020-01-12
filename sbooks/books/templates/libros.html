@@ -17,11 +17,11 @@
             <form class="row"id="formulario" method="get" action=''>{% csrf_token %}
 
                 <div class="search-box">
-                      <input class="form-control" type="text" name="titulo_autor" id="id_libros" placeholder="Buscar titulo, autor o categoría"/>
+                      <input class="form-control" type="text" name="titulo_autor" id="id_libros" placeholder="Buscar título, autor o categoría"/>
                 </div>
 
-              <div class="col-sm-3 centrado">
-                <button class="button primary btn_category" type="submit">Aplicar</button>
+              <div class="col-sm-3">
+                <button class="button primary btn_category buscar_btn" type="submit">Buscar</button>
               </div>
             </form>
 
@@ -30,7 +30,7 @@
         </section>
 
             <div class="box alt">
-                <div class="row gtr-uniform">
+                <div class="row gtr-uniform suspensivos">
                 {% for x in libros %}
                     <section class="col-3 col-6-medium col-12-xsmall">
                         <span class="icon solid alt major fa-chart-area"><img src="{{x.portada}}" alt="{{x.titulo}}"></span>

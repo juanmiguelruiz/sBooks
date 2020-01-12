@@ -3,31 +3,61 @@
     {% block titu %}<title> sBooks: Libros </title>{%  endblock %}
 
 {% block content %}
-        <section id="four" class="wrapper style1 special fade-up">
-            <p class="centrado">
-            <span class=" image left">
-                <img class="foto_libro" src="{{ libro.portada }}" alt="{{titulo}}">
-            </span>
-            <h2>{{libro.titulo}}</h2>
-            <h3>Puntuación (Casa del Libro): {{libro.puntuacion_media}} </h3>
 
-            <!-- Puntuacion del usuario -->
-            <form id="formulario" method="post" action="">{% csrf_token %}
-                (Ahora: {{ puntuacionUsuarioActual.puntuacion }})
-                {{ formulario.as_p }}
-                <input type="submit" value="puntuar">
+    <div id="main" class="wrapper style1">
+        <div class="container">
+            <header class="major">
+                <h2>{{libro.titulo}}</h2>
+                <p>{{libro.autor}}</p>
+                <h5>{{libro.categoria}}</h5>
+
+
+            </header>
+            <span>
+            <span class="image left">
+            <img src="{{ libro.portada }}" alt="{{titulo}}">
+            </span>
+            <h4>Puntuación (Casa del Libro): {{libro.puntuacion_media}} </h4>
+            <h4>Puntuación (Usuario): {{puntuacionUsuarioActual.puntuacion}} </h4>
+
+            <form class="row"id="formulario" method="post" action=''>{% csrf_token %}
+                <input class="form-control person" type="text" name="tu_puntuacion"  required value="" id="id_tu_puntuacion"
+                             placeholder="Puntuación del 1 al 5"/>
+
+                <div class="col-sm-3">
+                <button class="button primary btn_category " value='puntuar' type="submit">Puntuar</button>
+                </div>
             </form>
 
-            <h4>{{libro.autor}}</h4>
-            <h5>{{libro.categoria}}</h5>
-            <p> {{libro.descripcion}} </p>
+
+
+            <blockquote> {{libro.descripcion}} </blockquote>
+
             <a href="{{libro.detalle_enlace}}" class="button small">Casa del Libro</a>
-            </p>
-        </section>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+
+
+
+
+            </span>
+
+
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 {% endblock %}
