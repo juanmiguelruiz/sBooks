@@ -257,7 +257,7 @@ def indexWhoosh(request):
     writer.commit()
     msg = '{} libros indexados'.format(len(libros))
 
-    return render(request, 'message.html', {'message': msg}, {'STATIC_URL': settings.STATIC_URL})
+    return render(request, 'message.html', {'message': msg, 'STATIC_URL': settings.STATIC_URL})
 
 
 def searchWhoosh(request):
