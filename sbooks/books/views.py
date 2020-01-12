@@ -293,7 +293,7 @@ def searchWhoosh2(request):
                 libros_titulo_autor=request.GET.get("titulo_autor").upper()
                 query = MultifieldParser(["titulo", "autor","categoria"], schema=ix.schema)
                 q=query.parse(libros_titulo_autor)
-                results = searcher.search(q,sortedby=cats,limit= 30)
+                results = searcher.search(q,sortedby=cats,limit= 10)
 
                 for r in results:
                     if not libros:
