@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path, include
 from books import views as views
+from recommendation_sys import views as views_sys
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +29,7 @@ urlpatterns = [
     re_path(r'libro/(?P<id_libro>\d+)', views.libro),
     path('cargarBD/', views.populate_libros),
     path('cargarWhoosh/', views.indexWhoosh),
+    path('simulateData/', views_sys.simulate_users_rating),
 
 
     path('signup', views.signup, name='signup'),

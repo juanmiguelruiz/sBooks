@@ -1,3 +1,4 @@
+import shelve
 from builtins import type
 
 from django.shortcuts import render_to_response, get_object_or_404, HttpResponse, render, HttpResponseRedirect, redirect
@@ -11,12 +12,15 @@ import os.path
 from whoosh import sorting
 from whoosh.index import create_in, open_dir
 from whoosh.fields import *
-from whoosh.qparser import MultifieldParser, OrGroup,QueryParser
-from whoosh.query import Or, Term,Query,And
+from whoosh.qparser import MultifieldParser, OrGroup, QueryParser
+from whoosh.query import Or, Term, Query, And
 from books.models import *
 from books.forms import *
 import requests
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+import random
+from faker import Faker
+from django.db.models import Q
 
 
 # Create your views here.
@@ -26,8 +30,7 @@ def index(request):
 
 
 def libros(request):
-
-    querysetTituloAutor= request.GET.get("titulo_autor")
+    querysetTituloAutor = request.GET.get("titulo_autor")
     libros = Libro.objects.all()
     if querysetTituloAutor:
         libros = searchWhoosh(request)
@@ -42,15 +45,13 @@ def libros(request):
     except EmptyPage:
         libros = paginator.page(paginator.num_pages)
 
-    return render(request, 'libros.html', {'libros' : libros, 'STATIC_URL': settings.STATIC_URL})
-
-
+    return render(request, 'libros.html', {'libros': libros, 'STATIC_URL': settings.STATIC_URL})
 
 
 def libro(request, id_libro):
     libro = get_object_or_404(Libro, idLibro=id_libro)
     try:
-       puntuacionUsuarioActual = Puntuacion.objects.get(libro=libro.idLibro, usuario=request.user.id)
+        puntuacionUsuarioActual = Puntuacion.objects.get(libro=libro.idLibro, usuario=request.user.id)
     except:
         puntuacionUsuarioActual = ""
     # PUNTUACION USUARIO
@@ -73,7 +74,8 @@ def libro(request, id_libro):
                 puntuacionUsuarioActual.puntuacion = formulario.cleaned_data['tu_puntuacion']
                 puntuacionUsuarioActual.save()
     return render(request, 'libro.html',
-                  {'libro': libro, 'puntuacionUsuarioActual': puntuacionUsuarioActual, 'formulario': formulario, 'STATIC_URL': settings.STATIC_URL})
+                  {'libro': libro, 'puntuacionUsuarioActual': puntuacionUsuarioActual, 'formulario': formulario,
+                   'STATIC_URL': settings.STATIC_URL})
 
 
 def top(request):
@@ -92,7 +94,7 @@ def top(request):
     except EmptyPage:
         libros = paginator.page(paginator.num_pages)
 
-    return render(request, 'top.html', {'libros' : libros,'STATIC_URL': settings.STATIC_URL})
+    return render(request, 'top.html', {'libros': libros, 'STATIC_URL': settings.STATIC_URL})
 
 
 def parati(request):
@@ -169,7 +171,9 @@ def populate_libros(request):
     msg = '{} libros añadidos en la base de datos'.format(Libro.objects.count())
     return render(request, 'message.html', {'message': msg, 'STATIC_URL': settings.STATIC_URL})
 
+
 list
+
 
 def populate_categorias():
     Categoria.objects.all().delete()
@@ -286,45 +290,44 @@ def indexWhoosh(request):
 
 
 def searchWhoosh(request):
-
     libros = None
     if request.method == 'GET':
-            ix = open_dir("indiceWhoosh")
-            with ix.searcher() as searcher:
-                libros_titulo_autor=request.GET.get("titulo_autor").upper()
-                query = MultifieldParser(["titulo", "autor","categoria"], schema=ix.schema)
+        ix = open_dir("indiceWhoosh")
+        with ix.searcher() as searcher:
+            libros_titulo_autor = request.GET.get("titulo_autor").upper()
+            query = MultifieldParser(["titulo", "autor", "categoria"], schema=ix.schema)
 
-                q=query.parse(libros_titulo_autor)
+            q = query.parse(libros_titulo_autor)
 
-                results = searcher.search(q)
+            results = searcher.search(q)
 
-                for r in results:
-                    if not libros:
-                        libros=[Libro.objects.get(idLibro = r['idLibro'])]
-                    else:
+            for r in results:
+                if not libros:
+                    libros = [Libro.objects.get(idLibro=r['idLibro'])]
+                else:
 
-                        libros.append(Libro.objects.get(idLibro = r['idLibro']))
+                    libros.append(Libro.objects.get(idLibro=r['idLibro']))
     return libros
-
 
 
 def searchWhoosh2(request):
-
     libros = None
     if request.method == 'GET':
-            ix = open_dir("indiceWhoosh")
-            with ix.searcher() as searcher:
-                cats = sorting.FieldFacet("puntuacion_media",reverse=True)
-                libros_titulo_autor=request.GET.get("titulo_autor").upper()
-                query = MultifieldParser(["titulo", "autor","categoria"], schema=ix.schema)
-                q=query.parse(libros_titulo_autor)
-                results = searcher.search(q,sortedby=cats,limit= 10)
+        ix = open_dir("indiceWhoosh")
+        with ix.searcher() as searcher:
+            cats = sorting.FieldFacet("puntuacion_media", reverse=True)
+            libros_titulo_autor = request.GET.get("titulo_autor").upper()
+            query = MultifieldParser(["titulo", "autor", "categoria"], schema=ix.schema)
+            q = query.parse(libros_titulo_autor)
+            results = searcher.search(q, sortedby=cats, limit=10)
 
-                for r in results:
-                    if not libros:
-                        libros=[Libro.objects.get(idLibro = r['idLibro'])]
-                    else:
+            for r in results:
+                if not libros:
+                    libros = [Libro.objects.get(idLibro=r['idLibro'])]
+                else:
 
-                        libros.append(Libro.objects.get(idLibro = r['idLibro']))
+                    libros.append(Libro.objects.get(idLibro=r['idLibro']))
     return libros
+
+
 
