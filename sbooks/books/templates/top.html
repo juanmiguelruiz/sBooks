@@ -17,7 +17,7 @@
             <form class="row"id="formulario" method="get" action=''>{% csrf_token %}
 
                 <div class="search-box">
-                      <input class="form-control" type="text" name="titulo_autor" id="id_libros"
+                      <input class="form-control libros" type="text" name="titulo_autor" id="id_libros"
                              placeholder="Buscar título, autor o categoría"/>
                 </div>
 
@@ -31,9 +31,9 @@
         </section>
 
             <div class="box alt">
-                <div class="row gtr-uniform">
+                <div class="row gtr-uniform ">
                 {% for x in libros %}
-                    <section class="col-3 col-6-medium col-12-xsmall">
+                    <section class="col-3 col-6-medium col-12-xsmall suspensivos">
                         <span><img src="{{x.portada}}" alt="{{x.titulo}}" width="145" height="215"></span>
                         {% if not x.puntuacion_media %}
 
@@ -42,7 +42,7 @@
                         {% else %}
                             <h4>Puntuacion media: {{x.puntuacion_media}} </h4>
                         {% endif %}
-                        <h4 class="suspensivos">{{x.titulo}}</h4>
+                        <h4>{{x.titulo}}</h4>
                         <h5>{{x.autor}}</h5>
                         <a href='libro/{{x.idLibro}}' class="button small">Ver más</a>
                     </section>
@@ -54,6 +54,26 @@
         </div>
     </section>
 
+{% if libros.has_other_pages %}
+  <div class="pagination">
+    {% if libros.has_previous %}
+      <a href="?page={{ libros.previous_page_number }}">&laquo;</a>
+    {% else %}
+      <a class="disabled"><span>&laquo;</span></a>
+    {% endif %}
+    {% for i in libros.paginator.page_range %}
+      {% if libros.number == i %}
+        <a class="active"><span>{{ i }} <span class="sr-only">(actual)</span></span></a>
+      {% else %}
+        <a href="?page={{ i }}">{{ i }}</a>
+      {% endif %}
+    {% endfor %}
+    {% if libros.has_next %}
+      <a href="?page={{ libros.next_page_number }}">&raquo;</a>
+    {% else %}<span>&raquo;</span>
+    {% endif %}
+  </div>
+{% endif %}
 
 
 {% endblock %}

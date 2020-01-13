@@ -2,6 +2,8 @@ from builtins import type
 
 from django.shortcuts import render_to_response, get_object_or_404, HttpResponse, render, HttpResponseRedirect, redirect
 from django.conf import settings
+from django.views.generic import ListView
+
 from books.forms import *
 from books.models import *
 from bs4 import BeautifulSoup
@@ -14,6 +16,7 @@ from whoosh.query import Or, Term,Query,And
 from books.models import *
 from books.forms import *
 import requests
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
 # Create your views here.
@@ -29,7 +32,18 @@ def libros(request):
     if querysetTituloAutor:
         libros = searchWhoosh(request)
 
+    page = request.GET.get('page', 1)
+    paginator = Paginator(libros, 30)
+
+    try:
+        libros = paginator.page(page)
+    except PageNotAnInteger:
+        libros = paginator.page(1)
+    except EmptyPage:
+        libros = paginator.page(paginator.num_pages)
+
     return render(request, 'libros.html', {'libros' : libros, 'STATIC_URL': settings.STATIC_URL})
+
 
 
 
@@ -67,6 +81,17 @@ def top(request):
     libros = Libro.objects.all().order_by('-puntuacion_media')
     if querysetTituloAutor:
         libros = searchWhoosh2(request)
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(libros, 30)
+
+    try:
+        libros = paginator.page(page)
+    except PageNotAnInteger:
+        libros = paginator.page(1)
+    except EmptyPage:
+        libros = paginator.page(paginator.num_pages)
+
     return render(request, 'top.html', {'libros' : libros,'STATIC_URL': settings.STATIC_URL})
 
 
