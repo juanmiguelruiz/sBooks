@@ -4,7 +4,6 @@ from django.conf import settings
 from books.models import *
 from recommendation_sys.form import *
 import random
-from faker import Faker
 from django.db.models import Q
 from recommendation_sys.recommendations import *
 import requests
@@ -12,7 +11,7 @@ import requests
 # encoding:utf-8
 
 # SISTEMA DE RECOMENDACIÓN COLABORATIVO BASADO EN ITEMS
-fake = Faker()
+
 
 
 def simulate_users_rating(request):  # populate para tener datos de puntuaciones para el sistema de recomendación
@@ -24,8 +23,7 @@ def simulate_users_rating(request):  # populate para tener datos de puntuaciones
     indiceLibro = 0
     lista_usuarios = []
     for x in range(1000):
-        username = fake.name()
-        print("Insertando usuario: " + username)
+        print("Insertando usuario: " + str(x))
         lista_usuarios.append(User(username=str(x), password=str(x)))
     User.objects.bulk_create(lista_usuarios)
     print("Usuarios simulados: " + str(User.objects.count()))
