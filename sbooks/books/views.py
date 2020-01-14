@@ -35,13 +35,14 @@ def libros(request):
 
     page = request.GET.get('page', 1)
     paginator = Paginator(libros, 30)
+    if libros:
+        try:
+            libros = paginator.page(page)
+        except PageNotAnInteger:
+            libros = paginator.page(1)
+        except EmptyPage:
+            libros = paginator.page(paginator.num_pages)
 
-    try:
-        libros = paginator.page(page)
-    except PageNotAnInteger:
-        libros = paginator.page(1)
-    except EmptyPage:
-        libros = paginator.page(paginator.num_pages)
 
     return render(request, 'libros.html', {'libros': libros, 'STATIC_URL': settings.STATIC_URL})
 
@@ -287,7 +288,7 @@ def searchWhoosh(request):
 
             q = query.parse(libros_titulo_autor)
 
-            results = searcher.search(q)
+            results = searcher.search(q, limit=30)
 
             for r in results:
                 if not libros:
