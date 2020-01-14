@@ -97,14 +97,6 @@ def top(request):
     return render(request, 'top.html', {'libros': libros, 'STATIC_URL': settings.STATIC_URL})
 
 
-def parati(request):
-    return render(request, 'parati.html', {'STATIC_URL': settings.STATIC_URL})
-
-
-def similares(request):
-    return render(request, 'similares.html', {'STATIC_URL': settings.STATIC_URL})
-
-
 def signup(response):
     if response.method == "POST":
         form = RegisterForm(response.POST)
@@ -170,10 +162,6 @@ def populate_libros(request):
 
     msg = '{} libros añadidos en la base de datos'.format(Libro.objects.count())
     return render(request, 'message.html', {'message': msg, 'STATIC_URL': settings.STATIC_URL})
-
-
-list
-
 
 def populate_categorias():
     Categoria.objects.all().delete()

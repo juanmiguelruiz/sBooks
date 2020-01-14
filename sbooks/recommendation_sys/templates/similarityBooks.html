@@ -1,0 +1,16 @@
+<html>
+<head>
+<title></title>
+</head>
+<body>
+{% include 'base.html' %}
+<h1>Libros similares al Libro {{libro.titulo}}</h1>
+{% for item, puntuacion in items %}
+<ul>
+<li>Title: {{item.titulo}}  Score:{{puntuacion | floatformat:"2"}}  <a href="/libro/{{ item.idLibro }}">ver mas</a></li>
+</ul>
+{% empty %}
+<h2> Insuficientes datos </h2>
+{% endfor %}
+</body>
+</html>

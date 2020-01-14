@@ -24,12 +24,13 @@ urlpatterns = [
     path('index', views.index),
     path('libros', views.libros),
     path('top', views.top),
-    path('parati', views.parati),
-    path('similares', views.similares),
+    path('parati', views_sys.recomendar_libro_al_usuario),
+    path('similares', views_sys.libros_similares),
     re_path(r'libro/(?P<id_libro>\d+)', views.libro),
     path('cargarBD/', views.populate_libros),
     path('cargarWhoosh/', views.indexWhoosh),
-    path('simulateData/', views_sys.simulate_users_rating),
+    path('simularDatos/', views_sys.simulate_users_rating),
+    path('cargarRecSys/', views_sys.cargarRS),
 
 
     path('signup', views.signup, name='signup'),

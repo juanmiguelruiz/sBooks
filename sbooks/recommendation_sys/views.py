@@ -1,29 +1,13 @@
-from django.shortcuts import render
 import shelve
-from builtins import type
-
-from django.shortcuts import render_to_response, get_object_or_404, HttpResponse, render, HttpResponseRedirect, redirect
+from django.shortcuts import render
 from django.conf import settings
-from django.views.generic import ListView
-
-from books.forms import *
 from books.models import *
-from bs4 import BeautifulSoup
-import os.path
-from whoosh import sorting
-from whoosh.index import create_in, open_dir
-from whoosh.fields import *
-from whoosh.qparser import MultifieldParser, OrGroup, QueryParser
-from whoosh.query import Or, Term, Query, And
-from books.models import *
-from books.forms import *
-import requests
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from recommendation_sys.form import *
 import random
 from faker import Faker
 from django.db.models import Q
-from math import sqrt
 from recommendation_sys.recommendations import *
+import requests
 
 # encoding:utf-8
 
@@ -39,20 +23,18 @@ def simulate_users_rating(request):  # populate para tener datos de puntuaciones
 
     indiceLibro = 0
     lista_usuarios = []
-    for _ in range(100):
+    for x in range(1000):
         username = fake.name()
         print("Insertando usuario: " + username)
-        try:
-            User.objects.create(username=username, password=username)
-        except:
-            continue
+        lista_usuarios.append(User(username=str(x), password=str(x)))
+    User.objects.bulk_create(lista_usuarios)
     print("Usuarios simulados: " + str(User.objects.count()))
 
     primerIdLibro = Libro.objects.values_list('idLibro', flat=True).order_by('idLibro')[0]
     numero_libros = Libro.objects.count()
     lista_puntuaciones = []
-    for user in User.objects.filter(Q(is_superuser=False) and ~Q(username=request.user.username)):
-        for _ in range(5):
+    for user in User.objects.filter(~Q(username=request.user.username)):
+        for _ in range(20):
             idLibro = random.randint(primerIdLibro, primerIdLibro + numero_libros - 1)
             print("Insertando puntuación al libroID: " + str(idLibro))
             lista_puntuaciones.append(Puntuacion(usuario=user, libro=Libro.objects.get(idLibro=idLibro),
@@ -60,10 +42,11 @@ def simulate_users_rating(request):  # populate para tener datos de puntuaciones
     Puntuacion.objects.bulk_create(lista_puntuaciones)
     print("Puntuaciones simuladas: " + str(Puntuacion.objects.count()))
 
-    return render(request, 'index_sys.html')
+    return render(request, 'index.html', {'STATIC_URL': settings.STATIC_URL})
 
-
-def cargarRS():
+# HAY QUE HACER ESTO ANTES QUE NADA
+def cargarRS(request):
+    print("Cargando RS...")
     Prefs = {}
     shelf = shelve.open("dataRS.dat")
     ratings = Puntuacion.objects.all()
@@ -77,3 +60,44 @@ def cargarRS():
     shelf['ItemsPrefs'] = transformPrefs(Prefs)
     shelf['SimItems'] = calculateSimilarItems(Prefs, n=10)
     shelf.close()
+    print("RS cargado")
+
+    return render(request, 'index.html', {'STATIC_URL': settings.STATIC_URL})
+
+
+def libros_similares(request):
+    if request.method == 'POST':
+        formulario = libros_similaresForm(request.POST)
+        if formulario.is_valid():
+            shelf = shelve.open("dataRS.dat")
+            prefs_transformed = shelf['ItemsPrefs']
+            libro = Libro.objects.get(idLibro=formulario.cleaned_data['idLibro'])
+            ranking = topMatches(prefs_transformed, int(formulario.cleaned_data['idLibro']), n=3)
+            libros = []
+            puntuaciones = []
+            for re in ranking:
+                libros.append(Libro.objects.get(idLibro=re[1]))
+                puntuaciones.append(re[0])
+            items = zip(libros, puntuaciones)
+            return render(request, 'similarityBooks.html', {'libro': libro, 'items': items,
+                                                            'STATIC_URL': settings.STATIC_URL})
+
+    formulario = libros_similaresForm()
+    return render(request, "similares.html",
+                  {"formulario": formulario}, {'STATIC_URL': settings.STATIC_URL})
+
+def recomendar_libro_al_usuario(request):
+    top = None
+    shelf = shelve.open("dataRS.dat")
+    prefs = shelf['Prefs']
+    itemsim = shelf['SimItems']
+    ranking = getRecommendations(prefs, request.user.pk)
+    top = ranking[0:2]
+    libros = []
+    scores = []
+    for re in top:
+        libros.append(Libro.objects.get(idLibro=re[1]))
+        scores.append(re[0])
+    items = zip(libros, scores)
+    usuario = request.user
+    return render(request, 'parati.html', {'usuario': usuario, 'items': items})

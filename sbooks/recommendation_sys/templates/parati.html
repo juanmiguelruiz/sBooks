@@ -1,0 +1,16 @@
+<html>
+<head>
+<title>Sistema de Recomendacion - Movielens</title>
+</head>
+<body>
+{% include 'base.html' %}
+<h1>Libros Recomendados para el Usuario {{usuario.pk}}</h1>
+{% for item, score in items %}
+<ul>
+<li>Title: {{item.titulo}}  Score:{{score | floatformat:"2"}}  <a href="/libro/{{ item.idLibro }}">ver mas</a></li>
+</ul>
+{% empty %}
+<h2> Insufficient user data </h2>
+{% endfor %}
+</body>
+</html>
