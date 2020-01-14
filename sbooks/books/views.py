@@ -163,10 +163,10 @@ def populate_libros(request):
 
 def populate_categorias():
     Categoria.objects.all().delete()
-    categorias = ['Ciencias Políticas y Sociales', 'Psicología y Pedagogía', 'Autoayuda y Espiritualidad',
-                  'Historia', 'Ciencias', 'Medicina', 'Economía', 'Libros de Texto y Formación',
-                  'Infantil', 'Literatura', 'Cómics', 'Cómics manga infantil y juvenil', 'Juvenil',
-                  'Arte', 'Filología', 'Deportes y juegos', 'Cocina']
+    categorias = ['CIENCIAS POLÍTICAS Y SOCIALES', 'PSICOLOGÍA Y PEDAGOGÍA', 'AUTOAYUDA Y ESPIRITUALIDAD',
+                  'HISTORIA', 'CIENCIAS', 'MEDICINA', 'ECONOMÍA', 'LIBROS DE TEXTO Y FORMACIÓN',
+                  'INFANTIL', 'LITERATURA', 'CÓMICS', 'CÓMICS MANGA INFANTIL Y JUVENIL', 'JUVENIL',
+                  'ARTE', 'FILOLOGÍA', 'DEPORTES Y JUEGOS', 'COCINA']
     i = 0
     for categoria in categorias:
         print("Añadiendo categoria: " + categoria)
@@ -186,6 +186,7 @@ def scraping_beautifulsoup(enlace):  # Imprime por consola los resultados de la 
     if ul is not None:
         li = ul.find_all("li")
         categoria = li[2].div.string
+
     print("Categoria: " + categoria + "\n")
 
     # LISTA DE LIBROS
@@ -245,7 +246,7 @@ def scraping_beautifulsoup(enlace):  # Imprime por consola los resultados de la 
                 puntuacion_media = 0
         else:
             puntuacion_media = 0
-        libro = [titulo, autor, breve_descripcion, foto_portada, categoria, detalle_enlace, puntuacion_media]
+        libro = [titulo, autor, breve_descripcion, foto_portada, categoria.upper(), detalle_enlace, puntuacion_media]
         libros.append(libro)
 
     return libros
@@ -282,6 +283,7 @@ def searchWhoosh(request):
         with ix.searcher() as searcher:
             libros_titulo_autor = request.GET.get("titulo_autor").upper()
             query = MultifieldParser(["titulo", "autor", "categoria"], schema=ix.schema)
+            #query = QueryParser("titulo", ix.schema)
 
             q = query.parse(libros_titulo_autor)
 
