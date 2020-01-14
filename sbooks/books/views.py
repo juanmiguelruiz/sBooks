@@ -18,9 +18,7 @@ from books.models import *
 from books.forms import *
 import requests
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-import random
-from faker import Faker
-from django.db.models import Q
+
 
 
 # Create your views here.
