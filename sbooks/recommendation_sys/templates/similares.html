@@ -1,8 +1,13 @@
 {% extends 'base.html' %}
+{% load static %}
 
-    {% block titu %}<title> sBooks: Para tí </title>{%  endblock %}
+
+    {% block titu %}<title> sBooks: Similares </title>{%  endblock %}
 
 {% block content %}
+     <section id="four" class="wrapper style1 special fade-up">
+    <link rel="stylesheet" href="{%static 'css/main.css'%}" />
+    <noscript><link rel="stylesheet" href="{ %static 'css/noscript.css'%}" /></noscript>
 
     <section id="four" class="wrapper style1 special fade-up">
 
@@ -12,29 +17,22 @@
                 <h2>Similares</h2>
             </header>
 
-        <section>>
+    <section>
 
-    <form id="formulario" action="" method="post">{% csrf_token %}
+    <form id="formulario" class="libros" action="" method="post">{% csrf_token %}
         {{ formulario.as_p }}
         <p><input type="submit"></p>
     </form>
 
     </section>
 
-            <div class="box alt">
-                <div class="row gtr-uniform">
-                    <section class="col-3 col-6-medium col-12-xsmall">
-                        <span class="icon solid alt major fa-chart-area"></span>
-                        <h3>Puntuacion:  5</h3>
-                        <h3>Título</h3>
-                        <h4>Autor</h4>
-                        <a href="#" class="button small">Ver más</a>
-                    </section>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
+     <script src="{% static 'js/jquery.min.js'%}"></script>
+    <script src="{% static 'js/jquery.scrolly.min.js'%}"></script>
+    <script src="{% static 'js/jquery.dropotron.min.js'%}"></script>
+    <script src="{% static 'js/jquery.scrollex.min.js'%}"></script>
+    <script src="{% static '/js/browser.min.js'%}"></script>
+    <script src="{% static 'js/breakpoints.min.js'%}"></script>
+    <script src="{% static 'js/util.js'%}"></script>
+    <script src="{% static 'js/main.js'%}"></script>
 
 {% endblock %}

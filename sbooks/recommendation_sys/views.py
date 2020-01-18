@@ -40,7 +40,10 @@ def simulate_users_rating(request):  # populate para tener datos de puntuaciones
     Puntuacion.objects.bulk_create(lista_puntuaciones)
     print("Puntuaciones simuladas: " + str(Puntuacion.objects.count()))
 
-    return render(request, 'index.html', {'STATIC_URL': settings.STATIC_URL})
+    msg = 'Se han añadido {} puntuaciones simuladas'.format(Puntuacion.objects.count())
+
+
+    return render(request, 'message.html', {'message':msg, 'STATIC_URL': settings.STATIC_URL})
 
 # HAY QUE HACER ESTO ANTES QUE NADA
 def cargarRS(request):
@@ -60,7 +63,10 @@ def cargarRS(request):
     shelf.close()
     print("RS cargado")
 
-    return render(request, 'index.html', {'STATIC_URL': settings.STATIC_URL})
+    msg = 'Se ha cargado el Sistema de Recomendación'
+
+
+    return render(request, 'message.html', {'message':msg, 'STATIC_URL': settings.STATIC_URL})
 
 
 def libros_similares(request):

@@ -5,7 +5,9 @@
     <section id="four" class="wrapper style1 special fade-up">
      <div class="container">
             <header class="major">
-                <h2>Para tí</h2>
+               {% if not usuario.is_authenticated %} <h2>Para tí</h2> {% endif %}
+                {% if usuario.is_authenticated %} <h2>Libros Recomendados para el Usuario {{usuario.pk}}</h2> {% endif %}
+
             </header>
       </div>
 
@@ -20,16 +22,25 @@
 
     {% if usuario.is_authenticated %}
 
-
-
-        <h2>Libros Recomendados para el Usuario {{usuario.pk}}</h2>
-        {% for item, score in items %}
-        <ul>
-        <li>Title: {{item.titulo}}  Score:{{score | floatformat:"2"}}  <a href="/libro/{{ item.idLibro }}">ver mas</a></li>
-        </ul>
-        {% empty %}
-        <h3 class = 'nolibros'> Insufficient user data </h3>
-        {% endfor %}
+         <div class="box alt">
+                <div class="row gtr-uniform">
+                {% for item, score in items %}
+                        <section class="col-3 col-6-medium col-12-xsmall suspensivos">
+                        <span><img src="{{item.portada}}" alt="{{item.titulo}}" width="145" height="215"></span>
+                        {% if not item.puntuacion_media %}
+                            <h4>Puntuacion media: -  </h4>
+                        {% else %}
+                            <h4>Puntuacion media: {{item.puntuacion_media}} </h4>
+                        {% endif %}
+                        <h4>{{item.titulo}}</h4>
+                        <h5>{{item.autor}}</h5>
+                        <a href='libro/{{item.idLibro}}' class="button small">Ver más</a>
+                    </section>
+                     {% empty %}
+                        <h2 class="centrado"> Debes puntuar al menos 5 libros </h2>
+                    {% endfor %}
+                </div>
+            </div>
     {% endif %}
     </section>
 

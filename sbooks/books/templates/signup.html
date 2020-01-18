@@ -13,9 +13,12 @@
     {% csrf_token %}
 
         {{ form|crispy }}
+        <p>Su contraseña debe contener un numero.</p>
     <br>
 	<button type="submit" class="button primary">Regístrate</button>
     </form>
+    </section>
+
     <script src="{% static 'js/jquery.min.js'%}"></script>
     <script src="{% static 'js/jquery.scrolly.min.js'%}"></script>
     <script src="{% static 'js/jquery.dropotron.min.js'%}"></script>
@@ -24,5 +27,4 @@
     <script src="{% static 'js/breakpoints.min.js'%}"></script>
     <script src="{% static 'js/util.js'%}"></script>
     <script src="{% static 'js/main.js'%}"></script>
-    </section>
 {% endblock %}

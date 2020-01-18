@@ -1,16 +1,44 @@
-<html>
-<head>
-<title></title>
-</head>
-<body>
-{% include 'base.html' %}
-<h1>Libros similares al Libro {{libro.titulo}}</h1>
-{% for item, puntuacion in items %}
-<ul>
-<li>Title: {{item.titulo}}  Score:{{puntuacion | floatformat:"2"}}  <a href="/libro/{{ item.idLibro }}">ver mas</a></li>
-</ul>
-{% empty %}
-<h2> Insuficientes datos </h2>
-{% endfor %}
-</body>
-</html>
+{% extends 'base.html' %}
+
+    {% block titu %}<title> sBooks: Similares </title>{%  endblock %}
+
+{% block content %}
+
+
+    <section id="four" class="wrapper style1 special fade-up">
+
+
+        <div class="container">
+            <header class="major">
+                <h2>Libros similares a {{libro.titulo}}</h2>
+            </header>
+
+
+            <div class="box alt">
+                <div class="row gtr-uniform">
+                {% for item, puntuacion in items %}
+                        <section class="col-3 col-6-medium col-12-xsmall suspensivos">
+                        <span><img src="{{item.portada}}" alt="{{item.titulo}}" width="145" height="215"></span>
+                        {% if not item.puntuacion_media %}
+                            <h4>Puntuacion media: -  </h4>
+                        {% else %}
+                            <h4>Puntuacion media: {{item.puntuacion_media}} </h4>
+                        {% endif %}
+                        <h4>{{item.titulo}}</h4>
+                        <h5>{{item.autor}}</h5>
+                        <a href='libro/{{item.idLibro}}' class="button small">Ver más</a>
+                    </section>
+                     {% empty %}
+                        <h2> Insuficientes datos </h2>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+{% endblock %}
+
+
+
