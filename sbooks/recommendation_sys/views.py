@@ -77,8 +77,7 @@ def libros_similares(request):
                 libros.append(Libro.objects.get(idLibro=re[1]))
                 puntuaciones.append(re[0])
             items = zip(libros, puntuaciones)
-            return render(request, 'similarityBooks.html', {'libro': libro, 'items': items,
-                                                            'STATIC_URL': settings.STATIC_URL})
+            return render(request, 'similarityBooks.html', {'libro': libro, 'items': items, 'STATIC_URL': settings.STATIC_URL})
 
     formulario = libros_similaresForm()
     return render(request, "similares.html",
@@ -98,4 +97,4 @@ def recomendar_libro_al_usuario(request):
         scores.append(re[0])
     items = zip(libros, scores)
     usuario = request.user
-    return render(request, 'parati.html', {'usuario': usuario, 'items': items})
+    return render(request, 'parati.html', {'usuario': usuario, 'items': items,'STATIC_URL': settings.STATIC_URL})

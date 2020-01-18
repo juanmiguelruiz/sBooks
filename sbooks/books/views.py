@@ -106,7 +106,7 @@ def signup(response):
     else:
         form = RegisterForm()
 
-    return render(response, "signup.html", {"form": form})
+    return render(response, "signup.html", {"form": form, 'STATIC_URL': settings.STATIC_URL})
 
 
 # -----CARGAR DB-----

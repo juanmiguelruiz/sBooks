@@ -1,16 +1,36 @@
-<html>
-<head>
-<title>Sistema de Recomendacion - Movielens</title>
-</head>
-<body>
-{% include 'base.html' %}
-<h1>Libros Recomendados para el Usuario {{usuario.pk}}</h1>
-{% for item, score in items %}
-<ul>
-<li>Title: {{item.titulo}}  Score:{{score | floatformat:"2"}}  <a href="/libro/{{ item.idLibro }}">ver mas</a></li>
-</ul>
-{% empty %}
-<h2> Insufficient user data </h2>
-{% endfor %}
-</body>
-</html>
+{% extends 'base.html' %}
+{% block titu %} <title>Para tí</title> {% endblock %}
+{% block content %}
+
+    <section id="four" class="wrapper style1 special fade-up">
+     <div class="container">
+            <header class="major">
+                <h2>Para tí</h2>
+            </header>
+      </div>
+
+    {% if not usuario.is_authenticated %}
+
+        <h3>Debes <a class="nolibros" href="/signup">entrar</a> en el sistema para obtener recomendaciones.</h3>
+        <br>
+        <p>¿No tienes cuenta? Regístrate <a href="/signup">aquí</a></p>
+
+
+    {% endif %}
+
+    {% if usuario.is_authenticated %}
+
+
+
+        <h2>Libros Recomendados para el Usuario {{usuario.pk}}</h2>
+        {% for item, score in items %}
+        <ul>
+        <li>Title: {{item.titulo}}  Score:{{score | floatformat:"2"}}  <a href="/libro/{{ item.idLibro }}">ver mas</a></li>
+        </ul>
+        {% empty %}
+        <h3 class = 'nolibros'> Insufficient user data </h3>
+        {% endfor %}
+    {% endif %}
+    </section>
+
+{% endblock %}

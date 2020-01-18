@@ -4197,7 +4197,9 @@ input, select, textarea {
 	overflow: hidden;
 }
 
-
+.nolibros{
+	color: yellow;
+}
 
 .pagination{
 	margin: 0 auto;

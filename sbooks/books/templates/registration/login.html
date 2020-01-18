@@ -3,18 +3,11 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+    <style> from .input{ width: 20%; }</style>
      <br>   <br>   <br>   <br>
     <section id="four" class="wrapper style1 special fade-up">
     <link rel="stylesheet" href="{%static 'css/main.css'%}" />
     <noscript><link rel="stylesheet" href="{ %static 'css/noscript.css'%}" /></noscript>
-          <style>
-         from .input{
-             width: 30%;
-         }
-
-
-     </style>
-
 
      <form method="post" class="from-group entra">
 	{% csrf_token %}
